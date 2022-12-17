@@ -741,6 +741,10 @@ MonoBehaviour:
   wallJumpHorizontalInertia: 1.35
   wallInertiaEffectDuration: 0.65
   wallJumpHeight: 1.5
+  dashDistance: 2
+  dashDuration: 0.1
+  timeBetweenDashes: 0.5
+  dashOffset: 0.05
 --- !u!114 &695215402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -798,6 +802,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e5c5d3db-9208-43ae-9594-42aefc1bb136
     m_ActionName: PlatformerControls/Movement[/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 695215401}
+        m_TargetAssemblyTypeName: PlatformerPackage, Assembly-CSharp
+        m_MethodName: onDashPress
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ff62a086-87c6-4d65-87de-7e4e07d5ca92
+    m_ActionName: PlatformerControls/Dash[/Keyboard/shift]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlatformerControls

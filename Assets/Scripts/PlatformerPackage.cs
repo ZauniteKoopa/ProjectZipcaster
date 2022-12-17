@@ -51,6 +51,7 @@ public class PlatformerPackage : MonoBehaviour
     private float maxHorizontalSpeed = 8.5f;
     private bool isMoving = false;
     private float walkingDirection = 0f;
+    private bool facingRight = true;
 
     // The direction that the unit wants to move
     private float inertiaRatio = 0f;
@@ -69,6 +70,19 @@ public class PlatformerPackage : MonoBehaviour
     [SerializeField]
     private float wallJumpHeight = 6f;
     private IBlockerSensor curGrabbedWall = null;
+
+    // Dash properties
+    [Header("Dash Properties")]
+    [SerializeField]
+    private float dashDistance = 3f;
+    [SerializeField]
+    private float dashDuration = 0.5f;
+    [SerializeField]
+    private float timeBetweenDashes = 0.5f;
+    [SerializeField]
+    private float dashOffset = 0.05f;
+    private bool canDash = true;
+    private Coroutine runningDashCoroutine;
 
 
 
@@ -104,8 +118,11 @@ public class PlatformerPackage : MonoBehaviour
     void Update()
     {
         updateWallGrabState();
-        handleJump();
-        handleMovement();
+
+        if (runningDashCoroutine == null) {
+            handleJump();
+            handleMovement();
+        }
     }
 
 
@@ -329,7 +346,84 @@ public class PlatformerPackage : MonoBehaviour
         // Set inputVector value
         float currentDirection = context.ReadValue<float>();
         walkingDirection = currentDirection;
+
+        if (walkingDirection > 0.01f) {
+            facingRight = true;
+        } else if (walkingDirection < -0.01f) {
+            facingRight = false;
+        }
     }
+
+
+    // Main event handler for when pressing dash
+    //  Post: will run dash when button is pressed
+    public void onDashPress(InputAction.CallbackContext context) {
+        if (context.started) {
+            Vector2 dashDir = (facingRight) ? Vector2.right : Vector2.left;
+            runDashSequence(dashDir, dashDistance, dashDuration);
+        }
+    }
+
+
+
+    // Wrapper for running dash sequence
+    //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
+    //  Post: run dash sequence if you aren't dashing already
+    public void runDashSequence(Vector2 dir, float dashDist, float dashDuration) {
+        if (canDash) {
+            curFallVelocity = 0f;
+            runningDashCoroutine = StartCoroutine(dashSequence(dir, dashDist, dashDuration));
+        }
+    }
+
+
+    // Main IEnumerator for dashing
+    //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
+    //  Post: do a running dash sequence
+    private IEnumerator dashSequence(Vector2 dir, float dashDist, float dashDuration) {
+        Debug.Assert(dashDuration > 0f && dashDist > 0f);
+
+        // Calculate the speed of the actual dash itself
+        canDash = false;
+        float dashSpeed = dashDist / dashDuration;
+
+        // Cast a boxcast ray to get the actual distance to travel
+        dir = dir.normalized;
+        float actualDistance = dashDist;
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale, 0f, dir, dashDist, collisionMask);
+        if (hit.collider) {
+            actualDistance = hit.distance - dashOffset;
+        }
+
+        // Move in that assumed direction
+        float curDist = 0f;
+        float timer = 0f;
+
+        while (timer < dashDuration) {
+            yield return 0;
+
+            // Update time variables
+            timer += Time.deltaTime;
+
+            // Update distance variables
+            if (curDist < actualDistance) {
+                float distDelta = dashSpeed * Time.deltaTime;
+                curDist += distDelta;
+
+                // Adjust distance so it hits dest point exactly if it goes over
+                distDelta -= (curDist > actualDistance) ? (curDist - actualDistance) : 0f;
+                transform.Translate(distDelta * dir);
+            }
+        }
+
+        // Set coroutine to null
+        runningDashCoroutine = null;
+
+        // Wait for a delay before you can dash again
+        yield return new WaitForSeconds(timeBetweenDashes);
+        canDash = true;
+    }
+
 
 
     // Main helper function to run inertia sequence
