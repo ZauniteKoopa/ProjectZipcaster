@@ -268,7 +268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &351810427
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -738,8 +738,8 @@ MonoBehaviour:
   maxHorizontalSpeed: 10
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
-  wallJumpHorizontalInertia: 1.35
-  wallInertiaEffectDuration: 0.65
+  wallJumpHorizontalInertia: 2.5
+  wallInertiaEffectDuration: 0.3
   wallJumpHeight: 1.5
   dashDistance: 2
   dashDuration: 0.1
