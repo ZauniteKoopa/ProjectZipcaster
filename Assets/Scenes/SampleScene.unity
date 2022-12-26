@@ -580,8 +580,8 @@ GameObject:
   - component: {fileID: 695215399}
   - component: {fileID: 695215398}
   - component: {fileID: 695215397}
-  - component: {fileID: 695215401}
   - component: {fileID: 695215402}
+  - component: {fileID: 695215401}
   m_Layer: 6
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -714,7 +714,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 695215396}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11ed618227264be4b921e6186a32e4fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 095cc166492210e69ada8ac05affeaac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   feet: {fileID: 82063408}
@@ -724,7 +724,7 @@ MonoBehaviour:
   longJumpHeight: 3
   stoppedJumpHeight: 1
   gravityAcceleration: 35
-  apexGravityReduction: 0.7
+  apexGravityReduction: 0.65
   apexVelocityDefinition: 1.5
   maxFallSpeed: 20
   collisionMask:
@@ -736,16 +736,22 @@ MonoBehaviour:
   walkSpeed: 8
   airReduction: 0.75
   maxHorizontalSpeed: 10
-  momentumEaseIn: 0.6
+  momentumEaseIn: 0.75
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
   wallJumpHorizontalInertia: 2.5
   wallInertiaEffectDuration: 0.1
   wallJumpHeight: 1.5
+  extraJumps: 1
+  extraJumpsCancelsMomentum: 1
+  extraJumpHeight: 1.5
   dashDistance: 2
-  dashDuration: 0.1
+  dashDuration: 0.05
   timeBetweenDashes: 0.5
   dashOffset: 0.05
+  applyDashMomentumAfter: 1
+  dashMomentum: 1.5
+  momentumDuration: 0.5
 --- !u!114 &695215402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -806,7 +812,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 695215401}
-        m_TargetAssemblyTypeName: PlatformerPackage, Assembly-CSharp
+        m_TargetAssemblyTypeName: DashPlatformerPackage, Assembly-CSharp
         m_MethodName: onDashPress
         m_Mode: 0
         m_Arguments:

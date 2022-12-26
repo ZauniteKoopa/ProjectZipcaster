@@ -18,30 +18,30 @@ public class PlatformerPackage : MonoBehaviour
     [Header("Jump properties")]
     [SerializeField]
     [Min(0f)]
-    private float longJumpHeight = 5f;
+    private float longJumpHeight = 3f;
     [SerializeField]
     [Min(0f)]
     private float stoppedJumpHeight = 1f;
     [SerializeField]
     [Min(0f)]
-    private float gravityAcceleration = 3f;
+    private float gravityAcceleration = 35f;
     [SerializeField]
-    [Range(0f, 1f)]
-    private float apexGravityReduction = 0.5f;
-    [SerializeField]
-    [Min(0f)]
-    private float apexVelocityDefinition = 2f;
+    [Range(0.1f, 1f)]
+    private float apexGravityReduction = 0.7f;
     [SerializeField]
     [Min(0f)]
-    private float maxFallSpeed = 5f;
-    [SerializeField]
-    private LayerMask collisionMask;
+    private float apexVelocityDefinition = 1.5f;
     [SerializeField]
     [Min(0f)]
-    private float coyoteTime = 0.25f;
+    private float maxFallSpeed = 20f;
+    [SerializeField]
+    protected LayerMask collisionMask;
     [SerializeField]
     [Min(0f)]
-    private float jumpBufferTime = 0.4f;
+    private float coyoteTime = 0.05f;
+    [SerializeField]
+    [Min(0f)]
+    private float jumpBufferTime = 0.15f;
     [SerializeField]
     [Min(0f)]
     private float ceilingKnockback = 1.3f;
@@ -51,22 +51,29 @@ public class PlatformerPackage : MonoBehaviour
     private float curFallVelocity = 0f;
     private Coroutine currentJumpBufferSequence = null;
 
+    public bool grounded {
+        get { return !falling; }
+    }
+
     [Header("Move properties")]
     [SerializeField]
     [Min(0f)]
-    private float walkSpeed = 5f;
+    private float walkSpeed = 8f;
     [SerializeField]
     [Range(0f, 1f)]
     private float airReduction = 0.75f;
     [SerializeField]
     [Min(0f)]
-    private float maxHorizontalSpeed = 8.5f;
+    private float maxHorizontalSpeed = 10f;
     [SerializeField]
     [Range(0f, 1f)]
-    private float momentumEaseIn = 0.5f;
+    private float momentumEaseIn = 0.6f;
     private bool isMoving = false;
     private float walkingDirection = 0f;
     private bool facingRight = true;
+    public Vector2 forwardDir {
+        get {return (facingRight) ? Vector2.right : Vector2.left;}
+    }
 
     // The direction that the unit wants to move
     private float inertiaRatio = 0f;
@@ -82,31 +89,25 @@ public class PlatformerPackage : MonoBehaviour
     private float maxWallSlideSpeed = 3f;
     [SerializeField]
     [Min(0f)]
-    private float wallJumpHorizontalInertia = 1.2f;
+    private float wallJumpHorizontalInertia = 2.5f;
     [SerializeField]
     [Min(0f)]
-    private float wallInertiaEffectDuration = 0.5f;
+    private float wallInertiaEffectDuration = 0.1f;
     [SerializeField]
     [Min(0f)]
-    private float wallJumpHeight = 6f;
+    private float wallJumpHeight = 1.5f;
     private IBlockerSensor curGrabbedWall = null;
 
-    // Dash properties
-    [Header("Dash Properties")]
+    [Header("Extra Jumps")]
     [SerializeField]
-    [Min(0f)]
-    private float dashDistance = 3f;
+    [Min(0)]
+    private int extraJumps = 0;
     [SerializeField]
-    [Min(0f)]
-    private float dashDuration = 0.5f;
+    private bool extraJumpsCancelsMomentum = true;
     [SerializeField]
-    [Min(0f)]
-    private float timeBetweenDashes = 0.5f;
-    [SerializeField]
-    [Min(0f)]
-    private float dashOffset = 0.05f;
-    private bool canDash = true;
-    private Coroutine runningDashCoroutine;
+    [Min(0.01f)]
+    private float extraJumpHeight = 1f;
+    private int extraJumpsLeft = 0;
 
 
 
@@ -135,6 +136,9 @@ public class PlatformerPackage : MonoBehaviour
         }
 
         curFallVelocity = 0f;
+
+        // Set extra jumps to jumps left
+        extraJumpsLeft = extraJumps;
     }
 
 
@@ -142,17 +146,14 @@ public class PlatformerPackage : MonoBehaviour
     void Update()
     {
         updateWallGrabState();
-
-        if (runningDashCoroutine == null) {
-            handleJump();
-            handleMovement();
-        }
+        handleJump();
+        handleMovement();
     }
 
 
     // Main private helper function to handle the jumping action per frame
     //  Post: moves the player unit down based on jump
-    private void handleJump() {
+    protected virtual void handleJump() {
         // If falling, do falling sequence
         if (falling) {
             // Check celing condition
@@ -195,7 +196,7 @@ public class PlatformerPackage : MonoBehaviour
 
     // Main private helper function to handle the act of horizontal movewment per frame
     //  Post: move the player if the player is pressing a button
-    private void handleMovement() {
+    protected virtual void handleMovement() {
         // Initially apply inertia to the current speed
         float currentSpeed = inertiaRatio * walkSpeed;
 
@@ -263,6 +264,7 @@ public class PlatformerPackage : MonoBehaviour
             IBlockerSensor opposingBlocker = (walkingDirection < 0f) ? leftSensor : rightSensor;
             if (opposingBlocker.isBlocked()) {
                 curGrabbedWall = opposingBlocker;
+                stopAllMomentum();
             }
         }
 
@@ -280,6 +282,7 @@ public class PlatformerPackage : MonoBehaviour
     //  Post: when feet land, stop falling
     private void onFeetLand() {
         curFallVelocity = 0f;
+        extraJumpsLeft = extraJumps;
         falling = false;
     }
 
@@ -311,6 +314,15 @@ public class PlatformerPackage : MonoBehaviour
 
                 // Apply the jump
                 curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, wallJumpHeight);
+
+            // If you're in the air and you have extra jumps
+            } else if (extraJumpsLeft > 0) {
+                extraJumpsLeft--;
+                curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, extraJumpHeight);
+
+                if (extraJumpsCancelsMomentum) {
+                    stopAllMomentum();
+                }
 
             // If not, buffer the jump
             } else {
@@ -379,81 +391,11 @@ public class PlatformerPackage : MonoBehaviour
     }
 
 
-    // Main event handler for when pressing dash
-    //  Post: will run dash when button is pressed
-    public void onDashPress(InputAction.CallbackContext context) {
-        if (context.started) {
-            Vector2 dashDir = (facingRight) ? Vector2.right : Vector2.left;
-            runDashSequence(dashDir, dashDistance, dashDuration);
-        }
-    }
-
-
-
-    // Wrapper for running dash sequence
-    //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
-    //  Post: run dash sequence if you aren't dashing already
-    public void runDashSequence(Vector2 dir, float dashDist, float dashDuration) {
-        if (canDash) {
-            curFallVelocity = 0f;
-            runningDashCoroutine = StartCoroutine(dashSequence(dir, dashDist, dashDuration));
-        }
-    }
-
-
-    // Main IEnumerator for dashing
-    //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
-    //  Post: do a running dash sequence
-    private IEnumerator dashSequence(Vector2 dir, float dashDist, float dashDuration) {
-        Debug.Assert(dashDuration > 0f && dashDist > 0f);
-
-        // Calculate the speed of the actual dash itself
-        canDash = false;
-        float dashSpeed = dashDist / dashDuration;
-
-        // Cast a boxcast ray to get the actual distance to travel
-        dir = dir.normalized;
-        float actualDistance = dashDist;
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale, 0f, dir, dashDist, collisionMask);
-        if (hit.collider) {
-            actualDistance = hit.distance - dashOffset;
-        }
-
-        // Move in that assumed direction
-        float curDist = 0f;
-        float timer = 0f;
-
-        while (timer < dashDuration) {
-            yield return 0;
-
-            // Update time variables
-            timer += Time.deltaTime;
-
-            // Update distance variables
-            if (curDist < actualDistance) {
-                float distDelta = dashSpeed * Time.deltaTime;
-                curDist += distDelta;
-
-                // Adjust distance so it hits dest point exactly if it goes over
-                distDelta -= (curDist > actualDistance) ? (curDist - actualDistance) : 0f;
-                transform.Translate(distDelta * dir);
-            }
-        }
-
-        // Set coroutine to null
-        runningDashCoroutine = null;
-
-        // Wait for a delay before you can dash again
-        yield return new WaitForSeconds(timeBetweenDashes);
-        canDash = true;
-    }
-
-
 
     // Main helper function to run inertia sequence
     //  Pre: intertiaMagnitude is the magnitude the intertia is effected, duration is how long the inertia is interpolated to 0
     //  Post: starts with magnitude intertia and linearly interpolates the inertia 
-    private void runInertiaSequence(float inertiaMagnitude, float duration) {
+    public void runInertiaSequence(float inertiaMagnitude, float duration) {
         Debug.Assert(duration >= 0f);
 
         if (runningInertiaSequence != null) {
@@ -491,6 +433,27 @@ public class PlatformerPackage : MonoBehaviour
         // Cleanup
         inertiaRatio = 0f;
         runningInertiaSequence = null;
+    }
+
+
+    // Main private helper function to stop all vertical velocity
+    //  Pre: none
+    //  Post: stops all vertical velocity
+    protected void stopVerticalVelocity() {
+        curFallVelocity = 0f;
+    }
+
+
+    // Main private helper function to stop all momentum
+    //  Pre: none
+    //  Post: stops all momentum and sets the inertia is 0
+    protected void stopAllMomentum() {
+        if (runningInertiaSequence != null) {
+            StopCoroutine(runningInertiaSequence);
+            runningInertiaSequence = null;
+        }
+
+        inertiaRatio = 0f;
     }
 
 
