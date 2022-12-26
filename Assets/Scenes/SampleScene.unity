@@ -732,14 +732,15 @@ MonoBehaviour:
     m_Bits: 8
   coyoteTime: 0.05
   jumpBufferTime: 0.15
-  ceilingKnockback: -1.3
+  ceilingKnockback: 1.3
   walkSpeed: 8
   airReduction: 0.75
   maxHorizontalSpeed: 10
+  momentumEaseIn: 0.6
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
   wallJumpHorizontalInertia: 2.5
-  wallInertiaEffectDuration: 0.3
+  wallInertiaEffectDuration: 0.1
   wallJumpHeight: 1.5
   dashDistance: 2
   dashDuration: 0.1

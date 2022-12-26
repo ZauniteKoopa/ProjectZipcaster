@@ -17,25 +17,34 @@ public class PlatformerPackage : MonoBehaviour
 
     [Header("Jump properties")]
     [SerializeField]
+    [Min(0f)]
     private float longJumpHeight = 5f;
     [SerializeField]
+    [Min(0f)]
     private float stoppedJumpHeight = 1f;
     [SerializeField]
+    [Min(0f)]
     private float gravityAcceleration = 3f;
     [SerializeField]
+    [Range(0f, 1f)]
     private float apexGravityReduction = 0.5f;
     [SerializeField]
+    [Min(0f)]
     private float apexVelocityDefinition = 2f;
     [SerializeField]
+    [Min(0f)]
     private float maxFallSpeed = 5f;
     [SerializeField]
     private LayerMask collisionMask;
     [SerializeField]
+    [Min(0f)]
     private float coyoteTime = 0.25f;
     [SerializeField]
+    [Min(0f)]
     private float jumpBufferTime = 0.4f;
     [SerializeField]
-    private float ceilingKnockback = -1f;
+    [Min(0f)]
+    private float ceilingKnockback = 1.3f;
 
     private bool falling = true;
     private bool holdJumpButton = true;
@@ -44,11 +53,17 @@ public class PlatformerPackage : MonoBehaviour
 
     [Header("Move properties")]
     [SerializeField]
+    [Min(0f)]
     private float walkSpeed = 5f;
     [SerializeField]
+    [Range(0f, 1f)]
     private float airReduction = 0.75f;
     [SerializeField]
+    [Min(0f)]
     private float maxHorizontalSpeed = 8.5f;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float momentumEaseIn = 0.5f;
     private bool isMoving = false;
     private float walkingDirection = 0f;
     private bool facingRight = true;
@@ -60,26 +75,35 @@ public class PlatformerPackage : MonoBehaviour
     // Wall jump properties
     [Header("Wall Jump Properties")]
     [SerializeField]
+    [Range(0.01f, 1f)]
     private float wallSlideReduction = 0.4f;
     [SerializeField]
+    [Min(0f)]
     private float maxWallSlideSpeed = 3f;
     [SerializeField]
+    [Min(0f)]
     private float wallJumpHorizontalInertia = 1.2f;
     [SerializeField]
+    [Min(0f)]
     private float wallInertiaEffectDuration = 0.5f;
     [SerializeField]
+    [Min(0f)]
     private float wallJumpHeight = 6f;
     private IBlockerSensor curGrabbedWall = null;
 
     // Dash properties
     [Header("Dash Properties")]
     [SerializeField]
+    [Min(0f)]
     private float dashDistance = 3f;
     [SerializeField]
+    [Min(0f)]
     private float dashDuration = 0.5f;
     [SerializeField]
+    [Min(0f)]
     private float timeBetweenDashes = 0.5f;
     [SerializeField]
+    [Min(0f)]
     private float dashOffset = 0.05f;
     private bool canDash = true;
     private Coroutine runningDashCoroutine;
@@ -133,7 +157,7 @@ public class PlatformerPackage : MonoBehaviour
         if (falling) {
             // Check celing condition
             if (ceilingSensor.isBlocked()) {
-                curFallVelocity = ceilingKnockback;
+                curFallVelocity = -ceilingKnockback;
             }
 
             // Calculate the gravity being used
@@ -448,14 +472,20 @@ public class PlatformerPackage : MonoBehaviour
 
         // Setup
         float timer = 0f;
+        float actualInertiaEaseIn = momentumEaseIn * duration;
         inertiaRatio = inertiaMagnitude;
 
+        // Wait for a percentage of time stuck at this inertia magnitude
+        float intertiaStayingDuration = duration - actualInertiaEaseIn;
+        yield return new WaitForSeconds(intertiaStayingDuration);
+
+
         // main timer loop
-        while (timer < duration) {
+        while (timer < actualInertiaEaseIn) {
             yield return 0;
 
             timer += Time.deltaTime;
-            inertiaRatio = Mathf.Lerp(inertiaMagnitude, 0f, timer / duration);
+            inertiaRatio = Mathf.Lerp(inertiaMagnitude, 0f, timer / actualInertiaEaseIn);
         }
 
         // Cleanup
