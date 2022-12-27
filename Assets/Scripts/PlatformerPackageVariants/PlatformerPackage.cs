@@ -139,7 +139,13 @@ public class PlatformerPackage : MonoBehaviour
 
         // Set extra jumps to jumps left
         extraJumpsLeft = extraJumps;
+
+        initialize();
     }
+
+
+    // Main function to do initialization
+    protected virtual void initialize() {}
 
 
     // Update is called once per frame

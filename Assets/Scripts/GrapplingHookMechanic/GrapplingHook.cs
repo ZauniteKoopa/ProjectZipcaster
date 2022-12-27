@@ -8,7 +8,6 @@ using UnityEngine.Events;
 public class GrapplingHook : MonoBehaviour
 {
     // Main event to listen to
-    public UnityEvent<Collision2D> onHookCollision;
     public UnityEvent onHookEnd;
     private bool hookUsed = false;
     private bool hookRunning = false;
@@ -17,6 +16,7 @@ public class GrapplingHook : MonoBehaviour
     [SerializeField]
     private LayerMask collisionMask;
     private float distanceTimer = 0;
+    private Collision2D curContactCollision;
 
     // Main variables for a hook usage instance
     private Vector2 hookMovementDirection;
@@ -48,6 +48,7 @@ public class GrapplingHook : MonoBehaviour
                 hookRunning = false;
                 transform.position = owner.position;
                 transform.parent = owner;
+                onHookEnd.Invoke();
             } else {
                 transform.Translate(curDistDelta * hookMovementDirection);
             }
@@ -57,22 +58,24 @@ public class GrapplingHook : MonoBehaviour
 
     // Main collision handler
     //  Post: on collision, trigger the hook collision event if it hasn't already
-    private void OnCollision2D(Collision2D collision) {
-        if (!hookUsed) {
+    private void OnCollisionEnter2D(Collision2D collision) {
+        Debug.Log("collision");
+        if (!hookUsed && hookRunning) {
             hookUsed = true;
             hookRunning = false;
 
             transform.position = owner.position;
             transform.parent = owner;
-            
-            onHookCollision.Invoke(collision);
+
+            curContactCollision = collision;
+            onHookEnd.Invoke();
         }
     }
 
 
     // Main function to fire the hook at a certain direction
-    //  Pre:
-    //  Post:
+    //  Pre: hook dir is the direction that the hook is fired, hookDist is the distance of the hook and speed is how fast the hook is fired
+    //  Post: initiares fire hook sequence
     public void fireHook(Vector2 hookDir, float hookDist, float speed) {
         Debug.Assert(hookDist > 0f && speed > 0f);
 
@@ -81,11 +84,22 @@ public class GrapplingHook : MonoBehaviour
         hookDistance = hookDist;
         hookSpeed = speed;
 
+        curContactCollision = null;
+        distanceTimer = 0f;
+
         // Set flags
         hookUsed = false;
         hookRunning = true;
 
         // Disconnect to parent
         transform.parent = null;
+    }
+
+
+    // Main function to check if the hook sequence is running
+    //  Post: returns the current contact point that made contact with the hook
+    public bool hookedEnviornment(out Vector2 collisionPoint) {
+        collisionPoint = (curContactCollision != null) ? curContactCollision.GetContact(0).point : Vector2.zero;
+        return curContactCollision != null;
     }
 }

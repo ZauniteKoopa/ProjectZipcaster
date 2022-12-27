@@ -54,10 +54,10 @@ public class DashPlatformerPackage : PlatformerPackage
 
     // Main event handler for when pressing dash
     //  Post: will run dash when button is pressed
-    public void onDashPress(InputAction.CallbackContext context) {
+    public virtual void onDashPress(InputAction.CallbackContext context) {
         if (context.started) {
             Vector2 dashDir = forwardDir;
-            runDashSequence(dashDir, dashDistance, dashDuration);
+            runDashSequence(dashDir, dashDistance, dashDistance / dashDuration);
         }
     }
 
@@ -65,11 +65,13 @@ public class DashPlatformerPackage : PlatformerPackage
     // Wrapper for running dash sequence
     //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
     //  Post: run dash sequence if you aren't dashing already
-    public void runDashSequence(Vector2 dir, float dashDist, float dashDuration) {
+    public void runDashSequence(Vector2 dir, float dashDist, float dashSpeed) {
         if (canDash) {
             stopVerticalVelocity();
             stopAllMomentum();
-            runningDashCoroutine = StartCoroutine(dashSequence(dir, dashDist, dashDuration));
+
+            float dashTime = dashDist / dashSpeed;
+            runningDashCoroutine = StartCoroutine(dashSequence(dir, dashDist, dashTime));
         }
     }
 
