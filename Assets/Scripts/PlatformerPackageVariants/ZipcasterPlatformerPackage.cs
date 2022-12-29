@@ -19,9 +19,19 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     [SerializeField]
     [Min(0f)]
     private float maxZipHookDistance = 3f;
+    [SerializeField]
+    [Min(0.01f)]
+    private float zipcastMaxFallSpeed = 2f;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float zipcastHorizontalSpeedReduction = 0.5f;
+    [SerializeField]
+    [Min(0)]
+    private int numHookCasts = 1;
 
     private Vector2 mouseAimPosition;
     private bool hookFiring = false;
+    private int curHooksLeft;
 
 
 
@@ -32,6 +42,7 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
             Debug.LogError("NULL REFERENCE VARIABLES FOUND IN ZIPCASTER");
         }
 
+        curHooksLeft = numHookCasts;
         hook.onHookEnd.AddListener(onHookSequenceEnd);
     }
 
@@ -39,12 +50,13 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     // Main event handler for when pressing dash
     //  Post: will run dash when button is pressed
     public override void onDashPress(InputAction.CallbackContext context) {
-        if (context.started && !hookFiring) {
+        if (context.started && !hookFiring && curHooksLeft > 0 && !isDashing()) {
             // Calculate point in world
             Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
 
             // Calculate hook direction and fire hook
             Vector2 hookDir = (worldPoint - transform.position).normalized;
+            curHooksLeft--;
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
             hookFiring = true;
 
@@ -74,5 +86,37 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
 
             runDashSequence(hookedDashDir, hookedDistance, zipDashSpeed);
         }
+    }
+
+
+    // Private helper function to calculate the max fall speed for this current frame
+    //  Pre: none
+    //  Post: returns a non-negqative float representing the max fall speed of this frame
+    protected override float getMaxFallSpeed() {
+        float maxFallSpeed = (hookFiring) ? Mathf.Min(base.getMaxFallSpeed(), zipcastMaxFallSpeed) :
+                                            base.getMaxFallSpeed();
+
+        Debug.Assert(maxFallSpeed > 0f);
+        return maxFallSpeed;
+    }
+
+
+    // Private helper function to get current move speed at current frame
+    //  Pre: none
+    //  Post: returns a non-negative float representing the max waking speed
+    protected override float getCurrentWalkingSpeed() {
+        float curWalkSpeed = base.getCurrentWalkingSpeed();
+        curWalkSpeed *= (hookFiring) ? zipcastHorizontalSpeedReduction : 1f;
+
+        Debug.Assert(curWalkSpeed > 0f);
+        return curWalkSpeed;
+    }
+
+
+    // Refresh resources on landing
+    //  Pre: unit has landed
+    //  Post: refresh any resources that the specific package variant may need
+    protected override void refreshResourcesOnLanding() {
+        curHooksLeft = numHookCasts;
     }
 }

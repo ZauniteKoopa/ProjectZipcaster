@@ -59,7 +59,6 @@ public class GrapplingHook : MonoBehaviour
     // Main collision handler
     //  Post: on collision, trigger the hook collision event if it hasn't already
     private void OnCollisionEnter2D(Collision2D collision) {
-        Debug.Log("collision");
         if (!hookUsed && hookRunning) {
             hookUsed = true;
             hookRunning = false;

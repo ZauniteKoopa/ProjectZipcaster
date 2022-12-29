@@ -125,4 +125,12 @@ public class DashPlatformerPackage : PlatformerPackage
         yield return new WaitForSeconds(timeBetweenDashes);
         canDash = true;
     }
+
+    
+    // Public function to check if you're dashing
+    //  Pre: none
+    //  Post: returns bool true if dashing, false if not
+    public bool isDashing() {
+        return runningDashCoroutine != null;
+    }
 }

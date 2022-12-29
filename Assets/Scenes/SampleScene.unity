@@ -748,16 +748,19 @@ MonoBehaviour:
   extraJumpHeight: 1.5
   dashDistance: 3
   dashDuration: 0.5
-  timeBetweenDashes: 0.5
+  timeBetweenDashes: 0
   dashOffset: 0.05
   applyDashMomentumAfter: 0
   dashMomentum: 3
   momentumDuration: 0.5
   hook: {fileID: 1111970078}
   mainCamera: {fileID: 519420031}
-  zipDashSpeed: 20
-  zipHookSpeed: 20
+  zipDashSpeed: 25
+  zipHookSpeed: 30
   maxZipHookDistance: 8
+  zipcastMaxFallSpeed: 2
+  zipcastHorizontalSpeedReduction: 0.5
+  numHookCasts: 2
 --- !u!114 &695215402
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -181,8 +181,7 @@ public class PlatformerPackage : MonoBehaviour
 
             // Calculate the current velocity within this frame
             curFallVelocity -= (curGravity * Time.deltaTime);
-            float curMaxFallSpeed = (isGrabbingWall()) ? maxWallSlideSpeed : maxFallSpeed;
-            curFallVelocity = Mathf.Max(-curMaxFallSpeed, curFallVelocity);
+            curFallVelocity = Mathf.Max(-getMaxFallSpeed(), curFallVelocity);
 
             float curDistDelta = curFallVelocity * Time.deltaTime;
 
@@ -204,11 +203,11 @@ public class PlatformerPackage : MonoBehaviour
     //  Post: move the player if the player is pressing a button
     protected virtual void handleMovement() {
         // Initially apply inertia to the current speed
-        float currentSpeed = inertiaRatio * walkSpeed;
+        float currentSpeed = inertiaRatio * getCurrentWalkingSpeed();
 
         // If you're moving, apply walk speed in inputted direction
         if (isMoving) {
-            float inputPlayerSpeed = walkingDirection * walkSpeed;
+            float inputPlayerSpeed = walkingDirection * getCurrentWalkingSpeed();
             inputPlayerSpeed *= (falling) ? airReduction : 1f;
             currentSpeed += inputPlayerSpeed;
         }
@@ -290,7 +289,15 @@ public class PlatformerPackage : MonoBehaviour
         curFallVelocity = 0f;
         extraJumpsLeft = extraJumps;
         falling = false;
+
+        refreshResourcesOnLanding();
     }
+
+
+    // Refresh resources on landing
+    //  Pre: unit has landed
+    //  Post: refresh any resources that the specific package variant may need
+    protected virtual void refreshResourcesOnLanding() {}
 
 
     // Main event handler function to keep track when feet stopped sensing ground
@@ -470,6 +477,24 @@ public class PlatformerPackage : MonoBehaviour
         Debug.Assert(acceleration < 0f && jumpHeight > 0f);
 
         return Mathf.Sqrt(-2f * acceleration * jumpHeight);
+    }
+
+
+    // Private helper function to calculate the max fall speed for this current frame
+    //  Pre: none
+    //  Post: returns a non-negative float representing the max fall speed of this frame
+    protected virtual float getMaxFallSpeed() {
+        float curMaxFallSpeed = (isGrabbingWall()) ? maxWallSlideSpeed : maxFallSpeed;
+        Debug.Assert(curMaxFallSpeed > 0f);
+        return curMaxFallSpeed;
+    }
+
+
+    // Private helper function to get current move speed at current frame
+    //  Pre: none
+    //  Post: returns a non-negative float representing the max waking speed
+    protected virtual float getCurrentWalkingSpeed() {
+        return walkSpeed;
     }
 
 }
