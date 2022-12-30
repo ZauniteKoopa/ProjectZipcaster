@@ -152,7 +152,7 @@ public class DashPlatformerPackage : PlatformerPackage
             runningDashCoroutine = null;
             canDash = true;
 
-            if (applyMomentum && !grounded) {
+            if (applyMomentum) {
                 runInertiaSequence((dashDir.normalized.x) * dashMomentum, momentumDuration);
                 
                 if (dashDir.normalized.y > -minVerticalDashCancelReq) {

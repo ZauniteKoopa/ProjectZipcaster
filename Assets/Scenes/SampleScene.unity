@@ -736,7 +736,7 @@ MonoBehaviour:
   ceilingKnockback: 1.3
   walkSpeed: 8
   airReduction: 0.75
-  maxHorizontalSpeed: 10
+  maxHorizontalSpeed: 100
   momentumEaseIn: 0.75
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
@@ -751,7 +751,7 @@ MonoBehaviour:
   timeBetweenDashes: 0
   dashOffset: 0.05
   applyDashMomentumAfter: 0
-  dashMomentum: 7
+  dashMomentum: 1.5
   momentumDuration: 0.5
   dashCancelJumpHeight: 1.5
   minVerticalDashCancelReq: 0.3

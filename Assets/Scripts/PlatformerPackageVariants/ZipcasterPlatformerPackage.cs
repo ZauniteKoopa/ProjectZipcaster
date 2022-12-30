@@ -57,8 +57,10 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
 
             // Calculate hook direction and fire hook
             Vector2 hookDir = (worldPoint - transform.position).normalized;
-            curHooksLeft--;
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
+            if (!grounded) {
+                curHooksLeft--;
+            }
             hookFiring = true;
 
         }

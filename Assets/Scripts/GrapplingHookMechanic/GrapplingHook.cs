@@ -98,7 +98,15 @@ public class GrapplingHook : MonoBehaviour
     // Main function to check if the hook sequence is running
     //  Post: returns the current contact point that made contact with the hook
     public bool hookedEnviornment(out Vector2 collisionPoint) {
-        collisionPoint = (curContactCollision != null) ? curContactCollision.GetContact(0).point : Vector2.zero;
+        collisionPoint =  Vector2.zero;
+        
+        // If collision happened, set collision point to the contact point offseted by the normal
+        if (curContactCollision != null) {
+            Vector2 contactPoint = curContactCollision.GetContact(0).point;
+            Vector2 contactNormal = curContactCollision.GetContact(0).normal;
+            Vector2 ownerScale = owner.lossyScale;
+            collisionPoint = contactPoint + 0.55f * new Vector2(ownerScale.x * contactNormal.x, ownerScale.y * contactNormal.y);
+        }
         return curContactCollision != null;
     }
 }
