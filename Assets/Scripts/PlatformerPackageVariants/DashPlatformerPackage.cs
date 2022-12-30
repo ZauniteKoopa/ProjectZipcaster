@@ -32,6 +32,13 @@ public class DashPlatformerPackage : PlatformerPackage
     [SerializeField]
     [Min(0f)]
     private float momentumDuration = 0.5f;
+    [SerializeField]
+    [Min(0f)]
+    private float dashCancelJumpHeight = 10f;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float minVerticalDashCancelReq = 0.3f;
+    private Vector2 dashDir;
 
 
     // Main private helper function to handle the jumping action per frame
@@ -88,6 +95,7 @@ public class DashPlatformerPackage : PlatformerPackage
 
         // Cast a boxcast ray to get the actual distance to travel
         dir = dir.normalized;
+        dashDir = dir;
         float actualDistance = dashDist;
         RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale, 0f, dir, dashDist, collisionMask);
         if (hit.collider) {
@@ -133,4 +141,25 @@ public class DashPlatformerPackage : PlatformerPackage
     public bool isDashing() {
         return runningDashCoroutine != null;
     }
+
+
+    // Main function to cancel the dash 
+    //  Pre: none
+    //  Post:  cancels dash immediately
+    public void cancelDash(bool applyMomentum = false) {
+        if (runningDashCoroutine != null) {
+            StopCoroutine(runningDashCoroutine);
+            runningDashCoroutine = null;
+            canDash = true;
+
+            if (applyMomentum && !grounded) {
+                runInertiaSequence((dashDir.normalized.x) * dashMomentum, momentumDuration);
+                
+                if (dashDir.normalized.y > -minVerticalDashCancelReq) {
+                    launchVertically(dashCancelJumpHeight);
+                }
+            }
+        }
+    }
+
 }

@@ -29,6 +29,7 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     [Min(0)]
     private int numHookCasts = 1;
 
+
     private Vector2 mouseAimPosition;
     private bool hookFiring = false;
     private int curHooksLeft;
@@ -60,6 +61,18 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
             hookFiring = true;
 
+        }
+    }
+
+
+    // Main event handler function for when jump button has been pressed
+    //  Post: when jump button pressed, set velocity to jump velocity
+    public override void onJumpPress(InputAction.CallbackContext context) {
+        if (isDashing() && context.started) {
+            cancelDash(true);
+            
+        } else {
+            base.onJumpPress(context);
         }
     }
 

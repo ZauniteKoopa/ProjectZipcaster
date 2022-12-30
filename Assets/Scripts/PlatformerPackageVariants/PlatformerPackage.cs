@@ -309,7 +309,7 @@ public class PlatformerPackage : MonoBehaviour
     
     // Main event handler function for when jump button has been pressed
     //  Post: when jump button pressed, set velocity to jump velocity
-    public void onJumpPress(InputAction.CallbackContext context) {
+    public virtual void onJumpPress(InputAction.CallbackContext context) {
 
         // If you started pressing the jump button
         if (context.started) {
@@ -454,6 +454,14 @@ public class PlatformerPackage : MonoBehaviour
     //  Post: stops all vertical velocity
     protected void stopVerticalVelocity() {
         curFallVelocity = 0f;
+    }
+
+
+    // Main private helper function to launch the player vertically
+    //  Pre: launchSpeed is the launch speed to launch the player upwards, if negative downwards
+    //  Post: launch the player vertically
+    public void launchVertically(float launchHeight) {
+        curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, launchHeight);
     }
 
 

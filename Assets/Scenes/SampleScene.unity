@@ -751,8 +751,10 @@ MonoBehaviour:
   timeBetweenDashes: 0
   dashOffset: 0.05
   applyDashMomentumAfter: 0
-  dashMomentum: 3
+  dashMomentum: 7
   momentumDuration: 0.5
+  dashCancelJumpHeight: 1.5
+  minVerticalDashCancelReq: 0.3
   hook: {fileID: 1111970078}
   mainCamera: {fileID: 519420031}
   zipDashSpeed: 25
