@@ -7,6 +7,9 @@ public class BlockSensor2D : IBlockerSensor
     // Variables to update number of walls touching
     private int numWallsTouched = 0;
     private readonly object numWallsLock = new object();
+    private HashSet<IDynamicPlatform> touchingDynamicPlatforms = new HashSet<IDynamicPlatform>();
+    [SerializeField]
+    private bool triggerDynamicPlatforms = true;
 
 
     // Main function to check sensor
@@ -36,6 +39,9 @@ public class BlockSensor2D : IBlockerSensor
                 }
                 
                 numWallsTouched++;
+                if (triggerDynamicPlatforms) {
+                    addDynamicPlatform(collider);
+                }
             }
         }
     }
@@ -50,8 +56,39 @@ public class BlockSensor2D : IBlockerSensor
         if (colliderLayer == LayerMask.NameToLayer("Collisions")){
             lock(numWallsLock) {
                 numWallsTouched -= (numWallsTouched == 0) ? 0 : 1;
+
+                if (triggerDynamicPlatforms) {
+                    removeDynamicPlatform(collider);
+                }
             }
         }
     }
 
+
+    // Private helper function to add dynamic platform to the list if it isn't already
+    //  Pre: collider != null
+    //  Post: if collider has a dynamic platform component, then process that
+    private void addDynamicPlatform(Collider2D collider) {
+        Debug.Assert(collider != null);
+
+        IDynamicPlatform curDynamicPlatform =  collider.GetComponent<IDynamicPlatform>();
+        if (curDynamicPlatform != null) {
+            touchingDynamicPlatforms.Add(curDynamicPlatform);
+            curDynamicPlatform.onEntityLand(transform.parent);
+        }
+    }
+
+
+    // Private helper function to add dynamic platform to the list if it isn't already
+    //  Pre: collider != null
+    //  Post: if collider has a dynamic platform component, then process that
+    private void removeDynamicPlatform(Collider2D collider) {
+        Debug.Assert(collider != null);
+
+        IDynamicPlatform curDynamicPlatform =  collider.GetComponent<IDynamicPlatform>();
+        if (curDynamicPlatform != null && touchingDynamicPlatforms.Contains(curDynamicPlatform)) {
+            touchingDynamicPlatforms.Remove(curDynamicPlatform);
+            curDynamicPlatform.onEntityLeave(transform.parent);
+        }
+    }
 }

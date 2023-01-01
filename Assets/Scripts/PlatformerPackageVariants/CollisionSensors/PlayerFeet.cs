@@ -18,6 +18,7 @@ public class PlayerFeet : MonoBehaviour
     private int numGround = 0;
     private readonly object groundLock = new object();
     private float maxTouchingGroundHeight = 0f;
+    private HashSet<IDynamicPlatform> touchingDynamicPlatforms = new HashSet<IDynamicPlatform>();
 
 
     // Main event handler function to collect colliders as they enter the trigger box
@@ -42,6 +43,7 @@ public class PlayerFeet : MonoBehaviour
                 }
 
                 numGround++;
+                addDynamicPlatform(collider);
             }
         }
     }
@@ -64,7 +66,7 @@ public class PlayerFeet : MonoBehaviour
                         StopCoroutine(currentCoyoteSequence);
                     }
 
-                    currentCoyoteSequence = StartCoroutine(coyoteTimeSequence());
+                    currentCoyoteSequence = StartCoroutine(coyoteTimeSequence(collider));
                 }
             }
         }
@@ -74,7 +76,7 @@ public class PlayerFeet : MonoBehaviour
     // Main coyoteTime sequence handler
     //  Pre: no ground is being sensed in the moment that this is called, coyoteTime is set
     //  Post: feet will not report that player is falling until coyote time is finished
-    private IEnumerator coyoteTimeSequence() {
+    private IEnumerator coyoteTimeSequence(Collider2D leftPlatform) {
         Debug.Assert(coyoteTime >= 0f);
 
         // Setup
@@ -94,10 +96,39 @@ public class PlayerFeet : MonoBehaviour
 
         // If you still haven't hit the ground at the end of coyote time, indicate that you're falling
         if (!hitGround) {
+            removeDynamicPlatform(leftPlatform);
             fallingEvent.Invoke();
         }
 
         currentCoyoteSequence = null;
+    }
+
+
+    // Private helper function to add dynamic platform to the list if it isn't already
+    //  Pre: collider != null
+    //  Post: if collider has a dynamic platform component, then process that
+    private void addDynamicPlatform(Collider2D collider) {
+        Debug.Assert(collider != null);
+
+        IDynamicPlatform curDynamicPlatform =  collider.GetComponent<IDynamicPlatform>();
+        if (curDynamicPlatform != null) {
+            touchingDynamicPlatforms.Add(curDynamicPlatform);
+            curDynamicPlatform.onEntityLand(transform.parent);
+        }
+    }
+
+
+    // Private helper function to add dynamic platform to the list if it isn't already
+    //  Pre: collider != null
+    //  Post: if collider has a dynamic platform component, then process that
+    private void removeDynamicPlatform(Collider2D collider) {
+        Debug.Assert(collider != null);
+
+        IDynamicPlatform curDynamicPlatform =  collider.GetComponent<IDynamicPlatform>();
+        if (curDynamicPlatform != null && touchingDynamicPlatforms.Contains(curDynamicPlatform)) {
+            touchingDynamicPlatforms.Remove(curDynamicPlatform);
+            curDynamicPlatform.onEntityLeave(transform.parent);
+        }
     }
 
 
