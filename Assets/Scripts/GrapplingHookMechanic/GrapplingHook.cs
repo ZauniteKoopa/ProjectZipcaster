@@ -25,11 +25,13 @@ public class GrapplingHook : MonoBehaviour
 
     // Main component to connect to
     private Transform owner;
+    private LineRenderer latchLine;
 
 
     // On awake, initialize
     private void Awake() {
         owner = transform.parent;
+        latchLine = GetComponent<LineRenderer>();
 
         if (owner == null) {
             Debug.LogError("No parent connected to this hook object");
@@ -53,6 +55,10 @@ public class GrapplingHook : MonoBehaviour
                 transform.Translate(curDistDelta * hookMovementDirection);
             }
         }
+
+        if (latchLine.enabled) {
+            latchLine.SetPositions(new Vector3[] {owner.position, transform.position});
+        }
     }
 
 
@@ -63,12 +69,19 @@ public class GrapplingHook : MonoBehaviour
             hookUsed = true;
             hookRunning = false;
 
-            transform.position = owner.position;
-            transform.parent = owner;
+            transform.parent = collision.collider.transform;
 
             curContactCollision = collision;
             onHookEnd.Invoke();
         }
+    }
+
+
+    // Main function to reset the hook visually by parenting
+    public void reset() {
+        transform.position = owner.position + Vector3.forward;
+        transform.parent = owner;
+        latchLine.enabled = false;
     }
 
 
@@ -89,6 +102,7 @@ public class GrapplingHook : MonoBehaviour
         // Set flags
         hookUsed = false;
         hookRunning = true;
+        latchLine.enabled = true;
 
         // Disconnect to parent
         transform.parent = null;

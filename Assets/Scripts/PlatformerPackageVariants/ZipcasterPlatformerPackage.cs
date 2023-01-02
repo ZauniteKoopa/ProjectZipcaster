@@ -43,8 +43,11 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
             Debug.LogError("NULL REFERENCE VARIABLES FOUND IN ZIPCASTER");
         }
 
+        base.initialize();
+
         curHooksLeft = numHookCasts;
         hook.onHookEnd.AddListener(onHookSequenceEnd);
+        dashEndEvent.AddListener(onHookDashEnd);
     }
 
 
@@ -101,6 +104,12 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
 
             runDashSequence(hookedDashDir, hookedDistance, zipDashSpeed);
         }
+    }
+
+
+    // Main function to handle the event when the hook dash ends
+    private void onHookDashEnd() {
+        hook.reset();
     }
 
 

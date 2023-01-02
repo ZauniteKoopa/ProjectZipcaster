@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class DashPlatformerPackage : PlatformerPackage
 {
@@ -39,6 +40,14 @@ public class DashPlatformerPackage : PlatformerPackage
     [Range(0f, 1f)]
     private float minVerticalDashCancelReq = 0.3f;
     private Vector2 dashDir;
+
+    protected UnityEvent dashEndEvent;
+
+
+    // Initialize event
+    protected override void initialize() {
+        dashEndEvent = new UnityEvent();
+    }
 
 
     // Main private helper function to handle the jumping action per frame
@@ -125,6 +134,7 @@ public class DashPlatformerPackage : PlatformerPackage
 
         // Set coroutine to null to indicate you're not dashing anymore and apply momentum if that's enabled
         runningDashCoroutine = null;
+        dashEndEvent.Invoke();
         if (applyDashMomentumAfter && !grounded) {
             runInertiaSequence((dir.normalized.x) * dashMomentum, momentumDuration);
         }
@@ -159,6 +169,8 @@ public class DashPlatformerPackage : PlatformerPackage
                     launchVertically(dashCancelJumpHeight);
                 }
             }
+
+            dashEndEvent.Invoke();
         }
     }
 

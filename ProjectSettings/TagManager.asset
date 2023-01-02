@@ -14,8 +14,8 @@ TagManager:
   - Entity
   - CollisionSensor
   - EntitySensor
-  - 
-  - 
+  - Hook
+  - Hookee
   - 
   - 
   - 
