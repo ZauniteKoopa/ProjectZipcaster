@@ -167,6 +167,9 @@ public class DashPlatformerPackage : PlatformerPackage
                 
                 if (dashDir.normalized.y > -minVerticalDashCancelReq) {
                     launchVertically(dashCancelJumpHeight);
+                } else {
+                    float verticalSpeed = 10f;
+                    launchVerticallySpeed(dashDir.normalized.y * verticalSpeed);
                 }
             }
 

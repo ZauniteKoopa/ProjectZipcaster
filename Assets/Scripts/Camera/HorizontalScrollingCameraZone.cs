@@ -8,6 +8,14 @@ public class HorizontalScrollingCameraZone : CameraZone
     private float minLocalX = 0f;
     [SerializeField]
     private float maxLocalX = 0f;
+    [SerializeField]
+    private float minLocalY = 0f;
+    [SerializeField]
+    private float maxLocalY = 0f;
+    [SerializeField]
+    private bool lockY = true;
+    [SerializeField]
+    private bool lockX = false;
 
     private Transform playerTransform = null;
 
@@ -26,15 +34,49 @@ public class HorizontalScrollingCameraZone : CameraZone
     {
         // If player captured and camera isn't in transition mode, set the camera to player's position
         if (playerTransform != null && !PlayerCameraController.isCameraTransitioning()) {
-            // Calculate transition point
-            float playerLocalX = transform.InverseTransformPoint(playerTransform.transform.position).x;
             Transform cameraTransform = cameraMock.transform;
-            float transitionX = Mathf.Clamp(playerLocalX, minLocalX, maxLocalX);
-            Vector3 transitionPoint = new Vector3(transitionX, cameraTransform.localPosition.y, cameraTransform.localPosition.z);
+
+            // calculate X
+            float transitionX = cameraTransform.localPosition.x;
+            if (!lockX) {
+                float playerLocalX = transform.InverseTransformPoint(playerTransform.transform.position).x;
+                transitionX = Mathf.Clamp(playerLocalX, minLocalX, maxLocalX);
+            }
+
+            // Calculate Y
+            float transitionY = cameraTransform.localPosition.x;
+            if (!lockY) {
+                float playerLocalY = transform.InverseTransformPoint(playerTransform.transform.position).y;
+                transitionY = Mathf.Clamp(playerLocalY, minLocalY, maxLocalY);
+            }
+
+            Vector3 transitionPoint = getTransitionPoint();
 
             // Move camera instantly
             PlayerCameraController.instantMoveCamera(transform, transitionPoint, cameraTransform.transform.localRotation);
         }
+    }
+
+
+    // Main private helper function to get the transition point
+    private Vector3 getTransitionPoint() {
+        Transform cameraTransform = cameraMock.transform;
+
+        // calculate X
+        float transitionX = cameraTransform.localPosition.x;
+        if (!lockX) {
+            float playerLocalX = transform.InverseTransformPoint(playerTransform.transform.position).x;
+            transitionX = Mathf.Clamp(playerLocalX, minLocalX, maxLocalX);
+        }
+
+        // Calculate Y
+        float transitionY = cameraTransform.localPosition.x;
+        if (!lockY) {
+            float playerLocalY = transform.InverseTransformPoint(playerTransform.transform.position).y;
+            transitionY = Mathf.Clamp(playerLocalY, minLocalY, maxLocalY);
+        }
+
+        return new Vector3(transitionX, transitionY, cameraTransform.localPosition.z);
     }
 
 
@@ -47,8 +89,7 @@ public class HorizontalScrollingCameraZone : CameraZone
 
         // Transition
         Transform cameraTransform = cameraMock.transform;
-        float transitionX = Mathf.Clamp(playerLocalX, minLocalX, maxLocalX);
-        Vector3 transitionPoint = new Vector3(transitionX, cameraTransform.localPosition.y, cameraTransform.localPosition.z);
+        Vector3 transitionPoint = getTransitionPoint();
 
         PlayerCameraController.moveCamera(transform, transitionPoint, cameraTransform.transform.localRotation);
     }

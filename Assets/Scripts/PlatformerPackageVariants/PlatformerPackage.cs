@@ -465,6 +465,14 @@ public class PlatformerPackage : MonoBehaviour
     }
 
 
+    // Main private helper function to launch the player vertically
+    //  Pre: launchSpeed is the launch speed to launch the player upwards, if negative downwards
+    //  Post: launch the player vertically
+    public void launchVerticallySpeed(float launchSpeed) {
+        curFallVelocity = launchSpeed;
+    }
+
+
     // Main private helper function to stop all momentum
     //  Pre: none
     //  Post: stops all momentum and sets the inertia is 0
