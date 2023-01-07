@@ -25,6 +25,7 @@ public class GrapplingHook : MonoBehaviour
 
     // Main component to connect to
     private Transform owner;
+    private AudioSource hookCollisionSound;
     private LineRenderer latchLine;
 
 
@@ -32,6 +33,7 @@ public class GrapplingHook : MonoBehaviour
     private void Awake() {
         owner = transform.parent;
         latchLine = GetComponent<LineRenderer>();
+        hookCollisionSound = GetComponent<AudioSource>();
 
         if (owner == null) {
             Debug.LogError("No parent connected to this hook object");
@@ -72,6 +74,7 @@ public class GrapplingHook : MonoBehaviour
             transform.parent = collision.collider.transform;
 
             curContactCollision = collision;
+            hookCollisionSound.Play();
             onHookEnd.Invoke();
         }
     }

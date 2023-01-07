@@ -70,7 +70,7 @@ public class HorizontalScrollingCameraZone : CameraZone
         }
 
         // Calculate Y
-        float transitionY = cameraTransform.localPosition.x;
+        float transitionY = cameraTransform.localPosition.y;
         if (!lockY) {
             float playerLocalY = transform.InverseTransformPoint(playerTransform.transform.position).y;
             transitionY = Mathf.Clamp(playerLocalY, minLocalY, maxLocalY);

@@ -34,6 +34,8 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     private LayerMask hookLayerMask;
     [SerializeField]
     private LineRenderer aimLine;
+    [SerializeField]
+    private XY_AimAssist aimAssist;
 
 
     private Vector2 mouseAimPosition;
@@ -67,6 +69,9 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
 
             // Calculate hook direction and fire hook
             Vector2 hookDir = (worldPoint - transform.position).normalized;
+            if (aimAssist != null) {
+                hookDir = aimAssist.adjustAim(hookDir, transform.position);
+            }
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
             if (!grounded) {
                 curHooksLeft--;
@@ -81,23 +86,7 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     // Main function to update reticle as well as movement
     //  Post: reticle position is updated and movement controls are handled by parent classes
     protected override void handleMovement() {
-        // Update reticle position: calculate components for ray
-        Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
-        Vector2 rayDir = (worldPoint - transform.position).normalized;
-        float rayDist = maxZipHookDistance - 0.1f;
-
-        Vector2 noCollisionPosition = (Vector2.Distance(worldPoint, transform.position) > maxZipHookDistance) ?
-            (Vector2)transform.position + (rayDist * rayDir.normalized) :
-            (Vector2)worldPoint;
-
-        // Update reticle position: send out ray
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDir, rayDist, hookLayerMask);
-        reticle.position = (hit.collider != null) ? hit.point : noCollisionPosition;
-        reticle.GetComponent<SpriteRenderer>().color = (hit.collider != null) ? Color.red : Color.green;
-
-        if (!isDashing()) {
-            aimLine.SetPositions(new Vector3[] {transform.position, reticle.position});
-        }
+        updateReticlePosition();
 
         // Parents handles the rest of the movement
         base.handleMovement();
@@ -121,6 +110,35 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
         // Set inputVector value
         mouseAimPosition = context.ReadValue<Vector2>();
     }
+
+
+    // Private helper function to update reticle position
+    //  Pre: none
+    //  Post: updates reticle appropriately
+    private void updateReticlePosition() {
+        // Update reticle position: calculate components for ray
+        Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
+        Vector2 rayDir = (worldPoint - transform.position).normalized;
+        if (aimAssist != null) {
+            rayDir = aimAssist.adjustAim(rayDir, transform.position);
+        }
+
+        float rayDist = maxZipHookDistance - 0.1f;
+
+        Vector2 noCollisionPosition = (Vector2.Distance(worldPoint, transform.position) > maxZipHookDistance) ?
+            (Vector2)transform.position + (rayDist * rayDir.normalized) :
+            (Vector2)worldPoint;
+
+        // Update reticle position: send out ray
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDir, rayDist, hookLayerMask);
+        reticle.position = (hit.collider != null) ? hit.point : noCollisionPosition;
+        reticle.GetComponent<SpriteRenderer>().color = (hit.collider != null) ? Color.red : Color.green;
+
+        if (!isDashing()) {
+            aimLine.SetPositions(new Vector3[] {transform.position, reticle.position});
+        }
+    }
+
 
 
     // Main functon to handle the event when the hooking has ended

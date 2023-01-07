@@ -1397,6 +1397,10 @@ MonoBehaviour:
   cameraMock: {fileID: 2585489589807543278}
   minLocalX: 2.17
   maxLocalX: 15.68
+  minLocalY: 0
+  maxLocalY: 0
+  lockY: 1
+  lockX: 0
 --- !u!4 &2585489588324104346
 Transform:
   m_ObjectHideFlags: 0
