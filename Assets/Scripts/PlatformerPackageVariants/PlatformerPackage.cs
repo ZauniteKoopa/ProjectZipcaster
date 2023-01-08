@@ -449,6 +449,26 @@ public class PlatformerPackage : MonoBehaviour
     }
 
 
+    // Main function to adjust movement vector based on the state of the colliders
+    //  Pre: Vector2 is a normalized movement vector to be adjusted based on collision state
+    //  Post: Vector2 is adjusted to consider the collision so that it will slide instead of being stuck
+    protected Vector2 adjustMovementForCollision(Vector2 movementVector) {
+        movementVector = movementVector.normalized;
+
+        // Handle X variable
+        float minX = (leftSensor.isBlocked()) ? 0f : -1f;
+        float maxX = (rightSensor.isBlocked()) ? 0f : 1f;
+
+        // Handle Y variable
+        float minY = (grounded) ? 0f : -1f;
+        float maxY = (ceilingSensor.isBlocked()) ? 0f : 1f;
+
+        return new Vector2(Mathf.Clamp(movementVector.x, minX, maxX),
+                           Mathf.Clamp(movementVector.y, minY, maxY));
+    }
+
+
+
     // Main private helper function to stop all vertical velocity
     //  Pre: none
     //  Post: stops all vertical velocity

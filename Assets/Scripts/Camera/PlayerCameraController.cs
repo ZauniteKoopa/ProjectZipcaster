@@ -8,7 +8,7 @@ public class PlayerCameraController : MonoBehaviour
     // Static variables concerning camera transition
     private static PlayerCameraController mainPlayerCamera = null;
     private static Coroutine cameraTransitionCoroutine = null;
-    private readonly static float TRANSITION_SPEED = 30f;
+    private readonly static float TRANSITION_SPEED = 45f;
 
     // Static variables concerning original transition spot
     private static Transform playerPackage;

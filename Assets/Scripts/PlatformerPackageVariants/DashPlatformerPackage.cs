@@ -106,7 +106,7 @@ public class DashPlatformerPackage : PlatformerPackage
         dir = dir.normalized;
         dashDir = dir;
         float actualDistance = dashDist;
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale, 0f, dir, dashDist, collisionMask);
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, dir, dashDist, collisionMask);
         if (hit.collider) {
             actualDistance = hit.distance - dashOffset;
         }

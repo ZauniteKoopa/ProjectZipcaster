@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 284641972}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 13, y: 13, z: 1}
+  m_LocalScale: {x: 15, y: 15, z: 1}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 7
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16a6bfb72198f84d819ef100cf77cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyAimAssistRadius: 0.15
+  enemyAimAssistRadius: 0.3
   aimMask:
     serializedVersion: 2
     m_Bits: 1024
@@ -479,7 +479,7 @@ Transform:
   m_GameObject: {fileID: 4349017325454925368}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 4
@@ -1121,7 +1121,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4349017326146152972}
         m_TargetAssemblyTypeName: ZipcasterPlatformerPackage, Assembly-CSharp
-        m_MethodName: onDashPress
+        m_MethodName: onZipHookPress
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1173,7 +1173,7 @@ MonoBehaviour:
   longJumpHeight: 3
   stoppedJumpHeight: 1
   gravityAcceleration: 35
-  apexGravityReduction: 0.65
+  apexGravityReduction: 0.5
   apexVelocityDefinition: 1.5
   maxFallSpeed: 20
   collisionMask:
@@ -1194,21 +1194,11 @@ MonoBehaviour:
   extraJumps: 1
   extraJumpsCancelsMomentum: 1
   extraJumpHeight: 1.5
-  dashDistance: 3
-  dashDuration: 0.5
-  timeBetweenDashes: 0
-  dashOffset: 0.05
-  applyDashMomentumAfter: 0
-  dashMomentum: 1.5
-  momentumDuration: 0.5
-  dashCancelJumpHeight: 1.5
-  minVerticalDashCancelReq: 0.3
   hook: {fileID: 4349017325454925371}
   reticle: {fileID: 1509378568}
   mainCamera: {fileID: 4349017326858827610}
-  zipDashSpeed: 25
   zipHookSpeed: 30
-  maxZipHookDistance: 6
+  maxZipHookDistance: 7
   zipcastMaxFallSpeed: 2
   zipcastHorizontalSpeedReduction: 0.5
   numHookCasts: 2
@@ -1217,6 +1207,16 @@ MonoBehaviour:
     m_Bits: 1032
   aimLine: {fileID: 1509378570}
   aimAssist: {fileID: 284641977}
+  zipDashSpeed: 18
+  zipDashOffset: 0.3
+  collisionZipMask:
+    serializedVersion: 2
+    m_Bits: 8
+  dashMomentum: 1.5
+  momentumDuration: 0.5
+  dashCancelJumpHeight: 1.5
+  minVerticalDashCancelReq: 0.3
+  maxCloseDistance: 0.6
 --- !u!1 &4349017326315491897
 GameObject:
   m_ObjectHideFlags: 0

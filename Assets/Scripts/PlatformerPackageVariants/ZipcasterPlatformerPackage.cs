@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ZipcasterPlatformerPackage : DashPlatformerPackage
+public class ZipcasterPlatformerPackage : PlatformerPackage
 {
     [Header("Grappling Hook Variables")]
     [SerializeField]
@@ -12,9 +12,6 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     private Transform reticle;
     [SerializeField]
     private Camera mainCamera;
-    [SerializeField]
-    [Min(0f)]
-    private float zipDashSpeed = 10f;
     [SerializeField]
     [Min(0f)]
     private float zipHookSpeed = 10f;
@@ -37,11 +34,39 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     [SerializeField]
     private XY_AimAssist aimAssist;
 
+    [Header("Zip Dash Variables")]
+    [SerializeField]
+    [Min(0f)]
+    private float zipDashSpeed = 10f;
+    [SerializeField]
+    [Min(0.01f)]
+    private float zipDashOffset;
+    [SerializeField]
+    private LayerMask collisionZipMask;
+
+    [Header("Zip Dash Momentum")]
+    [SerializeField]
+    [Min(0f)]
+    private float dashMomentum = 1.5f;
+    [SerializeField]
+    [Min(0f)]
+    private float momentumDuration = 0.5f;
+    [SerializeField]
+    [Min(0f)]
+    private float dashCancelJumpHeight = 1.5f;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float minVerticalDashCancelReq = 0.3f;
+    [SerializeField]
+    [Min(0.01f)]
+    private float maxCloseDistance = 0.5f;
+
 
     private Vector2 mouseAimPosition;
     private bool hookFiring = false;
     private int curHooksLeft;
-
+    private Coroutine runningZipSequence;
+    private Vector2 zipDir;
 
 
     // Main function to set everything up
@@ -55,15 +80,14 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
 
         curHooksLeft = numHookCasts;
         hook.onHookEnd.AddListener(onHookSequenceEnd);
-        dashEndEvent.AddListener(onHookDashEnd);
         reticle.transform.parent = null;
     }
 
 
     // Main event handler for when pressing dash
     //  Post: will run dash when button is pressed
-    public override void onDashPress(InputAction.CallbackContext context) {
-        if (context.started && !hookFiring && curHooksLeft > 0 && !isDashing()) {
+    public void onZipHookPress(InputAction.CallbackContext context) {
+        if (context.started && !hookFiring && curHooksLeft > 0 && !isZipping()) {
             // Calculate point in world
             Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
 
@@ -96,8 +120,8 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     // Main event handler function for when jump button has been pressed
     //  Post: when jump button pressed, set velocity to jump velocity
     public override void onJumpPress(InputAction.CallbackContext context) {
-        if (isDashing() && context.started) {
-            cancelDash(true);
+        if (isZipping() && context.started) {
+            cancelZip(true);
             
         } else {
             base.onJumpPress(context);
@@ -134,7 +158,7 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
         reticle.position = (hit.collider != null) ? hit.point : noCollisionPosition;
         reticle.GetComponent<SpriteRenderer>().color = (hit.collider != null) ? Color.red : Color.green;
 
-        if (!isDashing()) {
+        if (!isZipping()) {
             aimLine.SetPositions(new Vector3[] {transform.position, reticle.position});
         }
     }
@@ -149,12 +173,15 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
         hookFiring = false;
 
         if (hook.hookedEnviornment(out collisionPoint)) {
-            float hookedDistance = Vector2.Distance(collisionPoint, transform.position);
+            // Run sequence
+            if (runningZipSequence != null) {
+                StopCoroutine(runningZipSequence);
+            }
 
-            Vector2 hookedDashDir = (collisionPoint - (Vector2)transform.position);
-            hookedDashDir = hookedDashDir.normalized;
+            stopVerticalVelocity();
+            stopAllMomentum();
+            runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed));
 
-            runDashSequence(hookedDashDir, hookedDistance, zipDashSpeed);
         } else {
             reticle.gameObject.SetActive(true);
         }
@@ -180,6 +207,58 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     }
 
 
+    // Main IEnumerator for dashing
+    //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
+    //  Post: do a running dash sequence
+    private IEnumerator zipSequence(Vector2 zipDest, float zipSpeed) {
+        Debug.Assert(zipSpeed > 0f);
+
+        // Set up loop
+        float curDistance = Vector2.Distance(transform.position, zipDest);
+        Vector2 curZipDir = adjustMovementForCollision(zipDest - (Vector2)transform.position);
+
+        // Actual loop
+        while (curDistance > maxCloseDistance && !isZeroVector(curZipDir)) {
+            yield return 0;
+
+            // Calculate distance
+            curZipDir = curZipDir.normalized;
+            zipDir = curZipDir;
+            float distDelta = zipSpeed * Time.deltaTime;
+            RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, curZipDir, distDelta, collisionZipMask);
+            if (hit.collider) {
+                distDelta = hit.distance - zipDashOffset;
+            }
+
+            // Translate
+            transform.Translate(distDelta * curZipDir);
+
+            // Establish loop variables again
+            curDistance = Vector2.Distance(transform.position, zipDest);
+            curZipDir = adjustMovementForCollision(zipDest - (Vector2)transform.position);
+        }
+
+        // Cleanup
+        stopVerticalVelocity();
+        stopAllMomentum();
+        runningZipSequence = null;
+        onHookDashEnd();
+    }
+
+
+    // Main private helper function to check if you're zipping
+    private bool isZipping() {
+        return runningZipSequence != null;
+    }
+
+
+    // Main function to check if a vector is approximating zero
+    //  Post: returns a boolean if the vector is close enough to zero
+    private bool isZeroVector(Vector2 v) {
+        return (v.x < 0.05f && v.x > -0.05f) && (v.y < 0.05f && v.y > -0.05f);
+    }
+
+
     // Private helper function to get current move speed at current frame
     //  Pre: none
     //  Post: returns a non-negative float representing the max waking speed
@@ -197,5 +276,29 @@ public class ZipcasterPlatformerPackage : DashPlatformerPackage
     //  Post: refresh any resources that the specific package variant may need
     protected override void refreshResourcesOnLanding() {
         curHooksLeft = numHookCasts;
+    }
+
+
+    // Main function to cancel the dash 
+    //  Pre: none
+    //  Post:  cancels dash immediately
+    public void cancelZip(bool applyMomentum = false) {
+        if (isZipping()) {
+            StopCoroutine(runningZipSequence);
+            runningZipSequence = null;
+
+            if (applyMomentum) {
+                runInertiaSequence((zipDir.normalized.x) * dashMomentum, momentumDuration);
+                
+                if (zipDir.normalized.y > -minVerticalDashCancelReq) {
+                    launchVertically(dashCancelJumpHeight);
+                } else {
+                    float verticalSpeed = 10f;
+                    launchVerticallySpeed(zipDir.normalized.y * verticalSpeed);
+                }
+            }
+
+            onHookDashEnd();
+        }
     }
 }
