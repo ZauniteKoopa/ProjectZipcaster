@@ -37,6 +37,12 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     [Header("Zip Dash Variables")]
     [SerializeField]
     [Min(0f)]
+    private float startingDashSpeed = 0f;
+    [SerializeField]
+    [Min(0.01f)]
+    private float accelerationDuration = 0.25f;
+    [SerializeField]
+    [Min(0f)]
     private float zipDashSpeed = 10f;
     [SerializeField]
     [Min(0.01f)]
@@ -113,7 +119,17 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
         updateReticlePosition();
 
         // Parents handles the rest of the movement
-        base.handleMovement();
+        if (!isZipping()) {
+            base.handleMovement();
+        }
+    }
+
+
+    // Main function to handle jump
+    protected override void handleJump() {
+        if (!isZipping()) {
+            base.handleJump();
+        }
     }
 
 
@@ -180,7 +196,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
             stopVerticalVelocity();
             stopAllMomentum();
-            runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed));
+            runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed, startingDashSpeed));
 
         } else {
             reticle.gameObject.SetActive(true);
@@ -210,21 +226,26 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main IEnumerator for dashing
     //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
     //  Post: do a running dash sequence
-    private IEnumerator zipSequence(Vector2 zipDest, float zipSpeed) {
-        Debug.Assert(zipSpeed > 0f);
+    private IEnumerator zipSequence(Vector2 zipDest, float zipSpeed, float startSpeed) {
+        Debug.Assert(startSpeed >= 0f && zipSpeed > 0f && zipSpeed >= startSpeed);
 
         // Set up loop
         float curDistance = Vector2.Distance(transform.position, zipDest);
         Vector2 curZipDir = adjustMovementForCollision(zipDest - (Vector2)transform.position);
+        float aTimer = 0f;
 
         // Actual loop
         while (curDistance > maxCloseDistance && !isZeroVector(curZipDir)) {
             yield return 0;
 
+            // Get current speed
+            aTimer = Mathf.Clamp(aTimer + Time.deltaTime, 0f, accelerationDuration);
+            float curZipSpeed = Mathf.Lerp(startSpeed, zipSpeed, aTimer / accelerationDuration);
+
             // Calculate distance
             curZipDir = curZipDir.normalized;
             zipDir = curZipDir;
-            float distDelta = zipSpeed * Time.deltaTime;
+            float distDelta = curZipSpeed * Time.deltaTime;
             RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, curZipDir, distDelta, collisionZipMask);
             if (hit.collider) {
                 distDelta = hit.distance - zipDashOffset;

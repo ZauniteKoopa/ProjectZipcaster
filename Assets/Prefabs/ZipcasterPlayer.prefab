@@ -1207,7 +1207,9 @@ MonoBehaviour:
     m_Bits: 1032
   aimLine: {fileID: 1509378570}
   aimAssist: {fileID: 284641977}
-  zipDashSpeed: 18
+  startingDashSpeed: 2
+  accelerationDuration: 0.2
+  zipDashSpeed: 20
   zipDashOffset: 0.3
   collisionZipMask:
     serializedVersion: 2
