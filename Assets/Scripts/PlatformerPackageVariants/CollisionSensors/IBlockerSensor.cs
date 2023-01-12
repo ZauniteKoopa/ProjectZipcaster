@@ -13,4 +13,10 @@ public abstract class IBlockerSensor : MonoBehaviour
     //  Pre: none, make sure collision layers are specified to reduce performance cost
     //  Post: return if something is touching this sensor
     public abstract bool isBlocked();
+
+
+    // Main function get the max projected floor height touched by this blocker
+    //  Pre: none, MAKE SURE isBlocked() is true before using this
+    //  Post: returns a float representing the Y position that the floor is found on
+    public abstract float getMaxFloorPosition();
 }

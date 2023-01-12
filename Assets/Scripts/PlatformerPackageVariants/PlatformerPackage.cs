@@ -109,6 +109,14 @@ public class PlatformerPackage : MonoBehaviour
     private float extraJumpHeight = 1f;
     private int extraJumpsLeft = 0;
 
+    [Header("Edge Detection")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float edgeTransversibleThreshold = 0.5f;
+    [SerializeField]
+    [Min(0.01f)]
+    private float edgeAdjustmentOffset = 0.1f;
+
 
 
     // Start is called before the first frame update
@@ -217,6 +225,9 @@ public class PlatformerPackage : MonoBehaviour
 
         // Check Collisions - if you're being blocked by something to stop movement and establish wallGrabState
         IBlockerSensor opposingBlocker = (currentSpeed < 0f) ? leftSensor : rightSensor;
+        if (Mathf.Abs(currentSpeed) > 0.1f) {
+            edgeAdjustment(opposingBlocker);
+        }
         if (opposingBlocker.isBlocked()) {
             currentSpeed = 0f;
         }
@@ -233,6 +244,25 @@ public class PlatformerPackage : MonoBehaviour
 
         // Actually apply speed to the player in the game
         transform.Translate(curDistDelta * Vector2.right);
+    }
+
+
+    // Main function to check for edge detection
+    //  Post: will adjust the player's verticle position if it's within edge threshold
+    private void edgeAdjustment(IBlockerSensor blockSensor) {
+        // If block sensor is actually hitting something, adjust
+        if (blockSensor.isBlocked()) {
+            float blockerFloorPos = blockSensor.getMaxFloorPosition();
+            float playerFeetPos = transform.position.y - (0.5f * transform.lossyScale.y);
+
+            bool edgeHigher = blockerFloorPos > playerFeetPos;
+            bool edgeInRange = blockerFloorPos - playerFeetPos < (transform.lossyScale.y * edgeTransversibleThreshold);
+
+            if (edgeHigher && edgeInRange) {
+                float adjustMagnitude = (blockerFloorPos + edgeAdjustmentOffset) - playerFeetPos;
+                transform.Translate(adjustMagnitude * Vector2.up);
+            }
+        }
     }
 
 

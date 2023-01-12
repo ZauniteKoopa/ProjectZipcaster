@@ -3614,6 +3614,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ZipcasterPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 4349017326146152972, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
+      propertyPath: accelerationDuration
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152973, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: m_RootOrder
       value: 0

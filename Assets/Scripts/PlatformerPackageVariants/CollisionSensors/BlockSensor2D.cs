@@ -11,6 +11,9 @@ public class BlockSensor2D : IBlockerSensor
     [SerializeField]
     private bool triggerDynamicPlatforms = true;
 
+    // Projected height concerning edge detection
+    private float latestFloorPosition;
+
 
     // Main function to check sensor
     //  returns true is numWallsTocuhed > 0
@@ -22,6 +25,20 @@ public class BlockSensor2D : IBlockerSensor
         }
 
         return blocked;
+    }
+
+
+    // Main function get the max projected floor height touched by this blocker
+    //  Pre: none, MAKE SURE isBlocked() is true before using this
+    //  Post: returns a float representing the Y position that the floor is found on
+    public override float getMaxFloorPosition() {
+        float floorPos = 0f;
+
+        lock(numWallsLock) {
+            floorPos = latestFloorPosition;
+        }
+
+        return floorPos;
     }
 
 
@@ -42,6 +59,8 @@ public class BlockSensor2D : IBlockerSensor
                 if (triggerDynamicPlatforms) {
                     addDynamicPlatform(collider);
                 }
+
+                latestFloorPosition = collider.transform.position.y + (0.5f * collider.transform.lossyScale.y);
             }
         }
     }

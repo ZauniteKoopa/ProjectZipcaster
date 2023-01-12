@@ -350,7 +350,7 @@ Transform:
   m_GameObject: {fileID: 4349017325124244036}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.85, z: 1}
+  m_LocalScale: {x: 0.15, y: 0.9, z: 1}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 1
@@ -821,7 +821,7 @@ Transform:
   m_GameObject: {fileID: 4349017325990279716}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.85, y: 0.15, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.15, z: 1}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 3
@@ -1194,6 +1194,8 @@ MonoBehaviour:
   extraJumps: 1
   extraJumpsCancelsMomentum: 1
   extraJumpHeight: 1.5
+  edgeTransversibleThreshold: 0.3
+  edgeAdjustmentOffset: 0.1
   hook: {fileID: 4349017325454925371}
   reticle: {fileID: 1509378568}
   mainCamera: {fileID: 4349017326858827610}
@@ -1207,8 +1209,8 @@ MonoBehaviour:
     m_Bits: 1032
   aimLine: {fileID: 1509378570}
   aimAssist: {fileID: 284641977}
-  startingDashSpeed: 2
-  accelerationDuration: 0.2
+  startingDashSpeed: 4
+  accelerationDuration: 0.1
   zipDashSpeed: 20
   zipDashOffset: 0.3
   collisionZipMask:
@@ -1216,7 +1218,7 @@ MonoBehaviour:
     m_Bits: 8
   dashMomentum: 1.5
   momentumDuration: 0.5
-  dashCancelJumpHeight: 1.5
+  dashCancelJumpHeight: 2
   minVerticalDashCancelReq: 0.3
   maxCloseDistance: 0.6
 --- !u!1 &4349017326315491897
@@ -1247,7 +1249,7 @@ Transform:
   m_GameObject: {fileID: 4349017326315491897}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.5, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.85, z: 1}
+  m_LocalScale: {x: 0.15, y: 0.9, z: 1}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 2
