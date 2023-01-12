@@ -44,7 +44,15 @@ public class GrapplingHook : MonoBehaviour
     // Main function to update timer
     private void Update() {
         if (!hookUsed && hookRunning) {
+            // Calculate distance directly by throwing raycast
             float curDistDelta = hookSpeed * Time.deltaTime;
+            float circleRadius = transform.lossyScale.x * 0.5f * 0.95f;
+            RaycastHit2D hit = Physics2D.CircleCast(transform.position, circleRadius, hookMovementDirection, curDistDelta, collisionMask);
+            if (hit.collider) {
+                curDistDelta = hit.distance;
+            }
+
+            // Update the distance timer
             distanceTimer += curDistDelta;
 
             // if passed distance, reset. Else, keep translating
