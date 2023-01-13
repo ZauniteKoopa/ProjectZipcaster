@@ -563,4 +563,17 @@ public class PlatformerPackage : MonoBehaviour
         return walkSpeed;
     }
 
+
+    // Main function to completely reset platformer package
+    //  Pre: none
+    //  Post: stops all running coroutines in this function
+    public virtual void reset() {
+        stopAllMomentum();
+
+        if (currentJumpBufferSequence != null) {
+            StopCoroutine(currentJumpBufferSequence);
+        }
+        currentJumpBufferSequence = null;
+    }
+
 }
