@@ -116,7 +116,9 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main function to update reticle as well as movement
     //  Post: reticle position is updated and movement controls are handled by parent classes
     protected override void handleMovement() {
-        updateReticlePosition();
+        if (curHooksLeft > 0) {
+            updateReticlePosition();
+        }
 
         // Parents handles the rest of the movement
         if (!isZipping()) {
@@ -198,7 +200,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
             stopAllMomentum();
             runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed, startingDashSpeed));
 
-        } else {
+        } else if (curHooksLeft > 0){
             reticle.gameObject.SetActive(true);
         }
     }
@@ -207,7 +209,10 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main function to handle the event when the hook dash ends
     private void onHookDashEnd() {
         hook.reset();
-        reticle.gameObject.SetActive(true);
+
+        if (curHooksLeft > 0) {
+            reticle.gameObject.SetActive(true);
+        }
     }
 
 
@@ -297,6 +302,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     //  Post: refresh any resources that the specific package variant may need
     protected override void refreshResourcesOnLanding() {
         curHooksLeft = numHookCasts;
+        reticle.gameObject.SetActive(true);
     }
 
 
