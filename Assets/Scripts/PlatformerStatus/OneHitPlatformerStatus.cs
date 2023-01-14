@@ -32,6 +32,8 @@ public class OneHitPlatformerStatus : IPlatformerStatus
     [SerializeField]
     [Min(0f)]
     private float deathFadeOut = 0f;
+    [SerializeField]
+    private IStaticVisualEffect deathVisualEffect = null;
 
     // Reference variables
     private SpriteRenderer entityRender;
@@ -87,6 +89,10 @@ public class OneHitPlatformerStatus : IPlatformerStatus
         // showcase death
         speaker.clip = deathSound;
         speaker.Play();
+        if (deathVisualEffect != null) {
+            deathVisualEffect.executeVFX(dyingTime + deathFadeIn + 0.01f);
+        }
+        
         yield return new WaitForSeconds(dyingTime);
 
         // Run black screen sequence and wait out fade in
