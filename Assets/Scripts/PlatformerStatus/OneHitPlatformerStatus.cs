@@ -5,14 +5,33 @@ using UnityEngine.Events;
 
 public class OneHitPlatformerStatus : IPlatformerStatus
 {
+    // Main UI component
+    [SerializeField]
+    PlayerUI mainPlayerUI = null;
+    AudioSource speaker = null;
+
     // Main variables concerning dying
     [Header("Dying variables")]
+    [SerializeField]
+    private GameObject[] otherVisualParts;
+    [SerializeField]
+    private AudioClip deathSound;
+    private bool dying = false;
+
+    // Main death UI sequence
+    [Header("Death UI Sequence")]
     [SerializeField]
     [Min(0.01f)]
     private float dyingTime = 2f;
     [SerializeField]
-    private GameObject[] otherVisualParts;
-    private bool dying = false;
+    [Min(0f)]
+    private float deathFadeIn = 0f;
+    [SerializeField]
+    [Min(0f)]
+    private float deathSolidTime = 0f;
+    [SerializeField]
+    [Min(0f)]
+    private float deathFadeOut = 0f;
 
     // Reference variables
     private SpriteRenderer entityRender;
@@ -27,6 +46,7 @@ public class OneHitPlatformerStatus : IPlatformerStatus
     private void Awake() {
         entityRender = GetComponent<SpriteRenderer>();
         platformerPackage = GetComponent<PlatformerPackage>();
+        speaker = GetComponent<AudioSource>();
 
         if (entityRender == null) {
             Debug.LogError("Renderer not found on this platformer character");
@@ -64,12 +84,21 @@ public class OneHitPlatformerStatus : IPlatformerStatus
             visualPart.SetActive(false);
         }
 
-        // Wait out death sequence
+        // showcase death
+        speaker.clip = deathSound;
+        speaker.Play();
         yield return new WaitForSeconds(dyingTime);
 
-        // Enable unit and teleport to spawnPoint
-        platformerRespawnEvent.Invoke();
+        // Run black screen sequence and wait out fade in
+        mainPlayerUI.runBlackScreenSequence(deathFadeIn, deathSolidTime, deathFadeOut);
+        yield return new WaitForSeconds(deathFadeIn);
+
+        // Teleport to spawn point in darkness and then wait out the rest of the black out sequence
         transform.position = spawnPoint;
+        yield return new WaitForSeconds(deathSolidTime + deathFadeOut);
+
+        // Enable unit 
+        platformerRespawnEvent.Invoke();
         entityRender.enabled = true;
         platformerPackage.enabled = true;
         foreach (GameObject visualPart in otherVisualParts) {
