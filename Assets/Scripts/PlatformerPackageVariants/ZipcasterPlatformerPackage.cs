@@ -95,7 +95,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main event handler for when pressing dash
     //  Post: will run dash when button is pressed
     public void onZipHookPress(InputAction.CallbackContext context) {
-        if (context.started && !hookFiring && curHooksLeft > 0 && !isZipping()) {
+        if (context.started && !hookFiring && curHooksLeft > 0 && !isZipping() && isAlive) {
             // Calculate point in world
             Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
 
@@ -336,6 +336,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     //  Post: stops all running coroutines in this function
     public override void reset() {
         hook.reset();
+        hookFiring = false;
         base.reset();
     }
 }

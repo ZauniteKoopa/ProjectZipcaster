@@ -90,6 +90,10 @@ public class GrapplingHook : MonoBehaviour
 
     // Main function to reset the hook visually by parenting
     public void reset() {
+        curContactCollision = null;
+        hookUsed = false;
+        hookRunning = false;
+
         transform.position = owner.position + Vector3.forward;
         transform.parent = owner;
         latchLine.enabled = false;

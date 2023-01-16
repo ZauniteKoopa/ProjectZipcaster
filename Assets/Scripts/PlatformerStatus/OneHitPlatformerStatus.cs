@@ -76,6 +76,7 @@ public class OneHitPlatformerStatus : IPlatformerStatus
     //  Post: disable unit and make him invisible for a given amount of time. Then respawn at last spawnPoint
     private IEnumerator deathSequence() {
         dying = true;
+        platformerPackage.isAlive = false;
 
         // Disable unit
         entityRender.enabled = false;
@@ -111,6 +112,7 @@ public class OneHitPlatformerStatus : IPlatformerStatus
             visualPart.SetActive(true);
         }
 
+        platformerPackage.isAlive = true;
         dying = false;
     }
     

@@ -14,6 +14,7 @@ public class PlatformerPackage : MonoBehaviour
     private IBlockerSensor rightSensor;
     [SerializeField]
     private IBlockerSensor ceilingSensor;
+    public bool isAlive = true;
 
     [Header("Jump properties")]
     [SerializeField]
