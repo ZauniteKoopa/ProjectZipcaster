@@ -58,7 +58,7 @@ public class OrbitalEffect2D : IStaticVisualEffect
 
             // Set positions accordingly
             setRadialPositions(timer / orbitalDuration);
-            transform.Rotate(rotationalSpeed * Vector3.forward);
+            transform.Rotate(rotationalSpeed * Time.deltaTime * Vector3.forward);
         }
 
         // Clean up

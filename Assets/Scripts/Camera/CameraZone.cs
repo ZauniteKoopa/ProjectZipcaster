@@ -46,8 +46,14 @@ public class CameraZone : MonoBehaviour
         PlayerCameraController.moveCamera(transform, cameraTransform.localPosition, cameraTransform.transform.localRotation);
 
         // Get spawn point if there's any
-        IPlatformerStatus playerStatus = collider.GetComponent<IPlatformerStatus>();
-        Vector2 playerPosition = collider.transform.position;
+        setPlayerSpawnPoint(collider);
+    }
+
+
+    // Main function to set spawn pont of player
+    protected void setPlayerSpawnPoint(Collider2D playerCollider) {
+        IPlatformerStatus playerStatus = playerCollider.GetComponent<IPlatformerStatus>();
+        Vector2 playerPosition = playerCollider.transform.position;
 
         if (playerStatus != null && possibleSpawnPoints.Length > 0) {
             float minDistance = Vector2.Distance(playerPosition, possibleSpawnPoints[0].position);

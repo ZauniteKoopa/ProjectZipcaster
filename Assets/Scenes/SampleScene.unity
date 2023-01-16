@@ -2017,6 +2017,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 867849039, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
+      propertyPath: rotationalSpeed
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152961, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: m_Name
       value: PlayerCharacter

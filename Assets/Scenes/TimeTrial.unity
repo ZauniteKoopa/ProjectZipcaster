@@ -3611,10 +3611,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4349017325454925368, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152961, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: m_Name
       value: ZipcasterPlayer

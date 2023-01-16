@@ -92,6 +92,8 @@ public class HorizontalScrollingCameraZone : CameraZone
         Vector3 transitionPoint = getTransitionPoint();
 
         PlayerCameraController.moveCamera(transform, transitionPoint, cameraTransform.transform.localRotation);
+
+        setPlayerSpawnPoint(collider);
     }
 
 

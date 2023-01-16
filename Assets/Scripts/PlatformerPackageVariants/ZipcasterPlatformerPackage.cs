@@ -95,7 +95,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main event handler for when pressing dash
     //  Post: will run dash when button is pressed
     public void onZipHookPress(InputAction.CallbackContext context) {
-        if (context.started && !hookFiring && curHooksLeft > 0 && !isZipping() && isAlive) {
+        if (context.started && !hookFiring && curHooksLeft > 0 && !isZipping() && isAlive && !isPaused) {
             // Calculate point in world
             Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
 

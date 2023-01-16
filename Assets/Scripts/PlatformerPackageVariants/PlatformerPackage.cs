@@ -14,6 +14,11 @@ public class PlatformerPackage : MonoBehaviour
     private IBlockerSensor rightSensor;
     [SerializeField]
     private IBlockerSensor ceilingSensor;
+    [SerializeField]
+    private IPauseMenu pauseMenu;
+    public bool isPaused {
+        get {return pauseMenu.inPauseState();}
+    }
     public bool isAlive = true;
 
     [Header("Jump properties")]
@@ -343,7 +348,7 @@ public class PlatformerPackage : MonoBehaviour
     public virtual void onJumpPress(InputAction.CallbackContext context) {
 
         // If you started pressing the jump button
-        if (context.started) {
+        if (context.started && !isPaused) {
             // If you're allowed to jump in the current state, then jump
             if (!falling) {
                 falling = true;
@@ -431,6 +436,14 @@ public class PlatformerPackage : MonoBehaviour
             facingRight = true;
         } else if (walkingDirection < -0.01f) {
             facingRight = false;
+        }
+    }
+
+
+    // Main event hanler function for when you are walking
+    public void onPauseMenuPress(InputAction.CallbackContext context) {
+        if (context.started && pauseMenu != null) {
+            pauseMenu.onPauseButtonPress();
         }
     }
 
