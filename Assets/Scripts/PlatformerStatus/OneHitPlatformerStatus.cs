@@ -101,7 +101,7 @@ public class OneHitPlatformerStatus : IPlatformerStatus
 
         // Teleport to spawn point in darkness and then wait out the rest of the black out sequence
         transform.position = spawnPoint;
-        yield return new WaitForSeconds(deathSolidTime + deathFadeOut);
+        yield return new WaitForSeconds(deathSolidTime + deathFadeOut - 0.01f);
 
         // Enable unit 
         platformerRespawnEvent.Invoke();

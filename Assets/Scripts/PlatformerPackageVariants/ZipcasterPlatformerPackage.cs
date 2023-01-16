@@ -25,6 +25,8 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     [Range(0f, 1f)]
     private float zipcastHorizontalSpeedReduction = 0.5f;
     [SerializeField]
+    private bool unlimitedHooks = false;
+    [SerializeField]
     [Min(0)]
     private int numHookCasts = 1;
     [SerializeField]
@@ -103,7 +105,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
                 hookDir = aimAssist.adjustAim(hookDir, transform.position);
             }
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
-            if (!grounded) {
+            if (!grounded && !unlimitedHooks) {
                 curHooksLeft--;
             }
             hookFiring = true;
@@ -327,5 +329,13 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
             onHookDashEnd();
         }
+    }
+
+    // Main function to completely reset platformer package
+    //  Pre: none
+    //  Post: stops all running coroutines in this function
+    public override void reset() {
+        hook.reset();
+        base.reset();
     }
 }
