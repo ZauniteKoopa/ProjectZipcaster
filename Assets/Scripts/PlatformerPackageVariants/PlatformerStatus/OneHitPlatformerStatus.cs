@@ -73,6 +73,7 @@ public class OneHitPlatformerStatus : IPlatformerStatus
         platformerPackage.isAlive = false;
 
         // Disable unit
+        platformerDeathEvent.Invoke();
         platformerPackage.reset();
         platformerPackage.enabled = false;
 

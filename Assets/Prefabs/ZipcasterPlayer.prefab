@@ -1109,10 +1109,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0033444203
-      value: 1.0986761
-      inSlope: -0.2906961
-      outSlope: -0.2906961
+      time: 0.011629943
+      value: 1.1498083
+      inSlope: -0.34499496
+      outSlope: -0.34499496
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -1120,8 +1120,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.9976684
       value: 0.80963
-      inSlope: -0.2906961
-      outSlope: -0.2906961
+      inSlope: -0.34499496
+      outSlope: -0.34499496
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -1133,10 +1133,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.008262634
-      value: 0.9004402
-      inSlope: 0.36699674
-      outSlope: 0.36699674
+      time: -0.0038833618
+      value: 0.84947586
+      inSlope: 0.41876307
+      outSlope: 0.41876307
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
@@ -1144,8 +1144,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1.011671
       value: 1.2747525
-      inSlope: 0.36699674
-      outSlope: 0.36699674
+      inSlope: 0.41876307
+      outSlope: 0.41876307
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -1154,6 +1154,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   platformer: {fileID: 4349017326146152972}
+  landingTime: 0.3
 --- !u!1 &1248609826
 GameObject:
   m_ObjectHideFlags: 0
@@ -3264,6 +3265,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98f0cffa46d185c68df59ee48c88905, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  platformerLandEvent:
+    m_PersistentCalls:
+      m_Calls: []
   feet: {fileID: 4349017326488780565}
   leftSensor: {fileID: 4349017326315491899}
   rightSensor: {fileID: 4349017325124244038}
@@ -3335,6 +3339,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   platformerRespawnEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  platformerDeathEvent:
     m_PersistentCalls:
       m_Calls: []
   mainPlayerUI: {fileID: 2081174298}

@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public abstract class IPlatformerStatus : MonoBehaviour
 {
     public UnityEvent platformerRespawnEvent;
+    public UnityEvent platformerDeathEvent;
 
     // Main function for platformer package to take damage
     //  Pre: int damage will be greater than 0

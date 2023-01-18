@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class PlatformerPackage : MonoBehaviour
 {
+    // Unity events for animations
+    public UnityEvent platformerLandEvent;
+
+
     [Header("Player Package Components")]
     [SerializeField]
     private PlayerFeet feet;
@@ -336,6 +341,7 @@ public class PlatformerPackage : MonoBehaviour
         falling = false;
 
         refreshResourcesOnLanding();
+        platformerLandEvent.Invoke();
     }
 
 
