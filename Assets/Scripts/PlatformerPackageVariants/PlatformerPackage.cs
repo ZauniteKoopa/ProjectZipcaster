@@ -57,6 +57,15 @@ public class PlatformerPackage : MonoBehaviour
     private float curFallVelocity = 0f;
     private Coroutine currentJumpBufferSequence = null;
 
+    // Accessible elements for animators
+    public virtual bool isJumping {
+        get {return falling && !isGrabbingWall();}
+    }
+
+    public float jumpScaleStatus {
+        get { return Mathf.Clamp(Mathf.Abs(curFallVelocity) / calculateStartingJumpVelocity(-gravityAcceleration, longJumpHeight), 0f, 1f);}
+    }
+
     public bool grounded {
         get { return !falling; }
     }

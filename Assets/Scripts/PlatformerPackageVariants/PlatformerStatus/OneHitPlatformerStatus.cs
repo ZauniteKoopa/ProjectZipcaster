@@ -36,7 +36,6 @@ public class OneHitPlatformerStatus : IPlatformerStatus
     private IStaticVisualEffect deathVisualEffect = null;
 
     // Reference variables
-    private SpriteRenderer entityRender;
     private PlatformerPackage platformerPackage;
 
     // Current spawn point
@@ -46,13 +45,8 @@ public class OneHitPlatformerStatus : IPlatformerStatus
 
     // On awake, get the following reference components
     private void Awake() {
-        entityRender = GetComponent<SpriteRenderer>();
         platformerPackage = GetComponent<PlatformerPackage>();
         speaker = GetComponent<AudioSource>();
-
-        if (entityRender == null) {
-            Debug.LogError("Renderer not found on this platformer character");
-        }
 
         if (platformerPackage == null) {
             Debug.LogError("No platformer package connected to this character");
@@ -79,7 +73,6 @@ public class OneHitPlatformerStatus : IPlatformerStatus
         platformerPackage.isAlive = false;
 
         // Disable unit
-        entityRender.enabled = false;
         platformerPackage.reset();
         platformerPackage.enabled = false;
 
@@ -106,7 +99,6 @@ public class OneHitPlatformerStatus : IPlatformerStatus
 
         // Enable unit 
         platformerRespawnEvent.Invoke();
-        entityRender.enabled = true;
         platformerPackage.enabled = true;
         foreach (GameObject visualPart in otherVisualParts) {
             visualPart.SetActive(true);

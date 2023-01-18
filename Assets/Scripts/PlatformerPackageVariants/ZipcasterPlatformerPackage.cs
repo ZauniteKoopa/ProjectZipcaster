@@ -76,6 +76,11 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     private Coroutine runningZipSequence;
     private Vector2 zipDir;
 
+    // Accessible elements for animators
+    public override bool isJumping {
+        get {return base.isJumping && runningZipSequence == null;}
+    }
+
 
     // Main function to set everything up
     //  Post: sets up grappling hook accordingly
