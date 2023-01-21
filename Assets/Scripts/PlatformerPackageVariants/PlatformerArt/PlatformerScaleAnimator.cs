@@ -9,6 +9,8 @@ public class PlatformerScaleAnimator : MonoBehaviour
     [SerializeField]
     private AnimationCurve yScale;
     [SerializeField]
+    private AnimationCurve splatLandingAnimation;
+    [SerializeField]
     private PlatformerPackage platformer;
     [SerializeField]
     [Min(0.01f)]
@@ -73,7 +75,7 @@ public class PlatformerScaleAnimator : MonoBehaviour
             yield return 0;
 
             timer += Time.deltaTime;
-            float frameProgress = timer / landingTime;
+            float frameProgress = splatLandingAnimation.Evaluate(timer / landingTime);
             transform.localScale = Vector3.Lerp(squashScale, originalScale, frameProgress);
         }
 
