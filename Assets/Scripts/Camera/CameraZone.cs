@@ -8,6 +8,9 @@ public class CameraZone : MonoBehaviour
     protected Camera cameraMock;
     [SerializeField]
     private Transform[] possibleSpawnPoints;
+    [SerializeField]
+    private LockedDoor[] lockedDoors;
+    private bool visited = false;
 
 
     // On awake, disable cameraMock
@@ -47,6 +50,9 @@ public class CameraZone : MonoBehaviour
 
         // Get spawn point if there's any
         setPlayerSpawnPoint(collider);
+
+        // Connect locked doors to player respawn event
+        connectPlayerToRoom(collider);
     }
 
 
@@ -71,5 +77,21 @@ public class CameraZone : MonoBehaviour
 
             playerStatus.changeCheckpoint(curSpawnPoint);
         }
+    }
+
+    // Main function to connect player to room
+    protected void connectPlayerToRoom(Collider2D playerCollider) {
+        if (!visited) {
+
+            // Connect events to locked doors
+            IPlatformerStatus playerStatus = playerCollider.GetComponent<IPlatformerStatus>();
+            if (playerStatus != null) {
+                foreach(LockedDoor lockedDoor in lockedDoors) {
+                    playerStatus.platformerRespawnEvent.AddListener(lockedDoor.reset);
+                }
+            }
+        }
+
+        visited = true;
     }
 }

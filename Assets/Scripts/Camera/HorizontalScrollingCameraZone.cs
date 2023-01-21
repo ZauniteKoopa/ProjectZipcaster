@@ -94,6 +94,8 @@ public class HorizontalScrollingCameraZone : CameraZone
         PlayerCameraController.moveCamera(transform, transitionPoint, cameraTransform.transform.localRotation);
 
         setPlayerSpawnPoint(collider);
+
+        connectPlayerToRoom(collider);
     }
 
 
