@@ -9,6 +9,7 @@ public class PlayerCameraController : MonoBehaviour
     private static PlayerCameraController mainPlayerCamera = null;
     private static Coroutine cameraTransitionCoroutine = null;
     private readonly static float TRANSITION_SPEED = 45f;
+    private readonly static float TRANSITION_TIMESCALE = 0.5f;
 
     // Static variables concerning original transition spot
     private static Transform playerPackage;
@@ -55,6 +56,7 @@ public class PlayerCameraController : MonoBehaviour
         if (cameraTransitionCoroutine != null) {
             mainPlayerCamera.StopCoroutine(cameraTransitionCoroutine);
             cameraTransitionCoroutine = null;
+            Time.timeScale = 1f;
         }
         
         mainPlayerCamera.transform.parent = parent;
@@ -82,6 +84,7 @@ public class PlayerCameraController : MonoBehaviour
         if (cameraTransitionCoroutine != null) {
             mainPlayerCamera.StopCoroutine(cameraTransitionCoroutine);
             cameraTransitionCoroutine = null;
+            Time.timeScale = 1f;
         }
         
         mainPlayerCamera.transform.parent = playerPackage;
@@ -140,17 +143,20 @@ public class PlayerCameraController : MonoBehaviour
 
         // Transition timer
         float timer = 0f;
-        WaitForEndOfFrame waitFrame = new WaitForEndOfFrame();
+        float deltaTime = 0.01f;
+        Time.timeScale = TRANSITION_TIMESCALE;
+        WaitForSecondsRealtime waitFrame = new WaitForSecondsRealtime(deltaTime);
 
         while (timer < time) {
             yield return waitFrame;
 
-            timer += Time.deltaTime;
+            timer += deltaTime;
             transform.position = Vector3.Lerp(globalStart, globalFinish, timer / time);
             transform.localRotation = Quaternion.Lerp(rotStart, rotFinish, timer / time);
         }
 
         // Finish off transition
+        Time.timeScale = 1f;
         transform.position = globalFinish;
         cameraTransitionCoroutine = null;
     }
