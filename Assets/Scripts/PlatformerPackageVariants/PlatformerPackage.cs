@@ -92,7 +92,7 @@ public class PlatformerPackage : MonoBehaviour
     private float walkingDirection = 0f;
     private bool facingRight = true;
     public Vector2 forwardDir {
-        get {return (facingRight) ? Vector2.right : Vector2.left;}
+        get {return (facingRight) ? transform.right : -1f * transform.right;}
     }
 
     // The direction that the unit wants to move
@@ -263,7 +263,7 @@ public class PlatformerPackage : MonoBehaviour
         }
 
         // Actually apply speed to the player in the game
-        transform.Translate(curDistDelta * Vector2.right);
+        transform.Translate(curDistDelta * transform.right);
     }
 
 

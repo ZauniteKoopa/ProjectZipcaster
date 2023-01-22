@@ -19,6 +19,10 @@ public class Cannon : MonoBehaviour
 
     // On awake, set up cannon
     private void Awake() {
+        if (cannonBall == null) {
+            Debug.LogError("No cannon ball prefab to clone for this cannon!");
+        }
+
         StartCoroutine(firingSequence());
     }
 
