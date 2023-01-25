@@ -88,6 +88,9 @@ public class PlatformerPackage : MonoBehaviour
     [SerializeField]
     [Range(0f, 1f)]
     private float momentumEaseIn = 0.6f;
+    [SerializeField]
+    [Min(0.1f)]
+    private float maxSlopeWalkingAngle = 20f;
     private bool isMoving = false;
     private float walkingDirection = 0f;
     private bool facingRight = true;
@@ -253,9 +256,10 @@ public class PlatformerPackage : MonoBehaviour
         }
 
         // Cast ray in that direction to check if you hit a floor so you don't glitch through (move to another function)
-        Vector2 rayDir = (currentSpeed < 0f) ? Vector2.left : Vector2.right;
-        float curDistDelta = currentSpeed * Time.deltaTime;
-        RaycastHit2D hit = Physics2D.Raycast(opposingBlocker.transform.position, rayDir, curDistDelta, collisionMask);
+        float curDistDelta = Mathf.Abs(currentSpeed * Time.deltaTime);
+        Vector2 moveDir = (currentSpeed < 0f) ? Vector2.left : Vector2.right;
+        moveDir = getMovementWithCollision(moveDir, curDistDelta);
+        RaycastHit2D hit = Physics2D.Raycast(opposingBlocker.transform.position, moveDir, curDistDelta, collisionMask);
 
         if (hit.collider != null) {
             float dir = Mathf.Sign(curDistDelta);
@@ -263,7 +267,7 @@ public class PlatformerPackage : MonoBehaviour
         }
 
         // Actually apply speed to the player in the game
-        transform.Translate(curDistDelta * transform.right);
+        transform.Translate(curDistDelta * moveDir);
     }
 
 
@@ -322,7 +326,25 @@ public class PlatformerPackage : MonoBehaviour
                 stopAllMomentum();
             }
         }
+    }
 
+
+    // Main Vector2 function to get the main movement vector
+    private Vector2 getMovementWithCollision(Vector2 movementDir, float distDelta) {
+        Debug.Assert(distDelta >= 0f);
+
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, movementDir.normalized, distDelta, collisionMask);
+
+        // If hit something and meets angle requirement, slope upwards. else, check downwards 
+        if (hit.collider != null && Vector2.Angle(hit.normal, Vector2.up) <= maxSlopeWalkingAngle) {
+            Vector2 norm = hit.normal;
+            Vector2 adjustedMove = Vector3.Project(movementDir, Vector2.Perpendicular(norm));
+            
+            return adjustedMove;
+        
+        } else {
+            return movementDir;
+        }
     }
 
 

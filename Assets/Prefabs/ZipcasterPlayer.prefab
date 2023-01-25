@@ -2451,8 +2451,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4349017325124244036}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.9, z: 1}
+  m_LocalPosition: {x: 0.5, y: 0.0511, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.62216, z: 1}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 1
@@ -3314,6 +3314,7 @@ MonoBehaviour:
   airReduction: 0.75
   maxHorizontalSpeed: 100
   momentumEaseIn: 0.75
+  maxSlopeWalkingAngle: 35
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
   wallJumpHorizontalInertia: 2.5
@@ -3502,8 +3503,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4349017326315491897}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.9, z: 1}
+  m_LocalPosition: {x: -0.5, y: 0.0511, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.62216, z: 1}
   m_Children: []
   m_Father: {fileID: 4349017326146152973}
   m_RootOrder: 2
