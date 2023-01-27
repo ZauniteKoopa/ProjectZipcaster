@@ -225,7 +225,8 @@ public class PlatformerPackage : MonoBehaviour
             }
 
             // Actually translate the function
-            transform.Translate(curDistDelta * Vector2.up);
+            Vector2 jumpVector = (curDistDelta >= 0f) ? Vector2.up : -1f * feet.getFallingDirection();
+            transform.Translate(curDistDelta * jumpVector);
         }
     }
 

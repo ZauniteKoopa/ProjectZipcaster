@@ -14,36 +14,52 @@ public class PlayerFeet : MonoBehaviour
     private float coyoteTime = 0.25f;
     private Coroutine currentCoyoteSequence = null;
 
+    // Angle threshold variables
+    private float angleThreshold = 35f;
+
     // Instance variables
     private int numGround = 0;
     private readonly object groundLock = new object();
     private float maxTouchingGroundHeight = 0f;
     private HashSet<IDynamicPlatform> touchingDynamicPlatforms = new HashSet<IDynamicPlatform>();
 
+    private Collider2D curSteepWall;
+    private Vector2 steepWallNormal;
+
 
     // Main event handler function to collect colliders as they enter the trigger box
     //  Pre: collision layers must be set because this considers all collisions possible
     //  Post: Increments numGround
-    private void OnTriggerEnter2D(Collider2D collider) {
+    private void OnCollisionEnter2D(Collision2D collision) {
+        Collider2D collider = collision.collider;
         int colliderLayer = collider.gameObject.layer;
 
         // Case in which collider is a platform
         if (colliderLayer == LayerMask.NameToLayer("Collisions")){
             // Get ground height
             float curGroundHeight = collider.ClosestPoint(transform.position).y;
+            float normalAngle = Vector2.Angle(Vector2.up, collision.GetContact(0).normal);
 
              // Update ground
             lock(groundLock) {
-                // Update max touching ground height
-                maxTouchingGroundHeight = (numGround == 0) ? curGroundHeight : Mathf.Max(maxTouchingGroundHeight, curGroundHeight);
+                // If the angle with the normal is greater than angle threshold, update normal
+                if (normalAngle > angleThreshold) {
+                    curSteepWall = collider;
+                    steepWallNormal = collision.GetContact(0).normal;
 
-                // If first time on ground after jumping, land
-                if (numGround == 0) {
-                    landingEvent.Invoke();
+                // Else, treat it as ground you can land on
+                } else {
+                    // Update max touching ground height
+                    maxTouchingGroundHeight = (numGround == 0) ? curGroundHeight : Mathf.Max(maxTouchingGroundHeight, curGroundHeight);
+
+                    // If first time on ground after jumping, land
+                    if (numGround == 0) {
+                        landingEvent.Invoke();
+                    }
+
+                    numGround++;
+                    addDynamicPlatform(collider);
                 }
-
-                numGround++;
-                addDynamicPlatform(collider);
             }
         }
     }
@@ -51,22 +67,31 @@ public class PlayerFeet : MonoBehaviour
     // Main event handler function to remove colliders when they exit the trigger box
     //  Pre: collision layers must be set because this considers all collisions possible
     //  Post: Decrements numGround
-    private void OnTriggerExit2D(Collider2D collider) {
+    private void OnCollisionExit2D(Collision2D collision) {
+        Collider2D collider = collision.collider;
         int colliderLayer = collider.gameObject.layer;
 
         if (colliderLayer == LayerMask.NameToLayer("Collisions")) {
+
             // Update ground
             lock(groundLock) {
-                int prevGround = numGround;
-                numGround -= (numGround == 0) ? 0 : 1;
+                // If steep wall is the collider, turn that to null
+                if (curSteepWall == collider) {
+                    curSteepWall = null;
+                
+                // If under angle, its probably ground you stepped on
+                } else {
+                    int prevGround = numGround;
+                    numGround -= (numGround == 0) ? 0 : 1;
 
-                // If you stepped off of ground, start coyote time
-                if (numGround == 0 && prevGround > 0) {
-                    if (currentCoyoteSequence != null) {
-                        StopCoroutine(currentCoyoteSequence);
+                    // If you stepped off of ground, start coyote time
+                    if (numGround == 0 && prevGround > 0) {
+                        if (currentCoyoteSequence != null) {
+                            StopCoroutine(currentCoyoteSequence);
+                        }
+
+                        currentCoyoteSequence = StartCoroutine(coyoteTimeSequence(collider));
                     }
-
-                    currentCoyoteSequence = StartCoroutine(coyoteTimeSequence(collider));
                 }
             }
         }
@@ -136,5 +161,13 @@ public class PlayerFeet : MonoBehaviour
     public void setCoyoteTime(float cTime) {
         Debug.Assert(cTime >= 0f);
         coyoteTime = cTime;
+    }
+
+
+    // Main function to get falling direction
+    //  Pre: none
+    //  Post: get falling direction
+    public Vector2 getFallingDirection() {
+        return (curSteepWall == null) ? Vector2.down : (Vector2)Vector3.Project(Vector2.down, Vector2.Perpendicular(steepWallNormal));
     }
 }
