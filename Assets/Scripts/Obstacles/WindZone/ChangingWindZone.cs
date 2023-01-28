@@ -16,11 +16,30 @@ public class ChangingWindZone : IWindZone
     private float windTransitionDuration = 0.5f;
     private float curWindSpeed = 0f;
     private bool onWind1 = true;
+    private Coroutine runningWindSequence = null;
 
 
-    // On awake, set everything up
-    private void Awake() {
-        StartCoroutine(changeWindSequence());
+    // Main function to start the wind zone gradually
+    //  Pre: none
+    //  Post: wind zone has now started
+    public override void startWindZone() {
+        if (runningWindSequence != null) {
+            StopCoroutine(runningWindSequence);
+        }
+
+        runningWindSequence = StartCoroutine(changeWindSequence());;
+    }
+
+
+    // Main function to stop the wind zone
+    //  Pre:
+    //  Post: wind zone has been stopped
+    public override void stopWindZone() {
+        if (runningWindSequence != null) {
+            StopCoroutine(runningWindSequence);
+        }
+
+        onWind1 = true;
     }
 
 

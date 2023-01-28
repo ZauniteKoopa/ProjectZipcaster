@@ -640,8 +640,23 @@ public class PlatformerPackage : MonoBehaviour
     // Main function to set the wind zone, overriding this wind zone
     //  Pre: none
     //  Post: if null, player is not affected by wind. Else, player will be effected by wind from the wind zone
+    //          also starts the wind zone if its null and stop the wind zone the player was connected to before if it exists
     public void setWindZone(IWindZone weather) {
-        roomWindZone = weather;
+        // Check if the room zone input is not the same as current so that we don't constantly reset it
+        if (weather != roomWindZone) {
+            // Stop old wind zone
+            if (roomWindZone != null) {
+                roomWindZone.stopWindZone();
+            } 
+
+            // Set
+            roomWindZone = weather;
+
+            // Start new wind zone
+            if (roomWindZone != null) {
+                roomWindZone.startWindZone();
+            }
+        } 
     }
 
 

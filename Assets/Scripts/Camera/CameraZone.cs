@@ -100,6 +100,5 @@ public class CameraZone : MonoBehaviour
         }
 
         visited = true;
-
     }
 }
