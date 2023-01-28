@@ -588,6 +588,10 @@ public class PlatformerPackage : MonoBehaviour
     //  Pre: launchSpeed is the launch speed to launch the player upwards, if negative downwards
     //  Post: launch the player vertically
     public void launchVerticallySpeed(float launchSpeed) {
+        if (launchSpeed > 0f && !falling) {
+            falling = true;
+        }
+
         curFallVelocity = launchSpeed;
     }
 

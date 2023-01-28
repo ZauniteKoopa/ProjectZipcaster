@@ -79,10 +79,14 @@ public class GrapplingHook : MonoBehaviour
             hookUsed = true;
             hookRunning = false;
 
-            transform.parent = collision.collider.transform;
+            if (collision.collider.tag != "NonStick") {
+                transform.parent = collision.collider.transform;
+                curContactCollision = collision;
+                hookCollisionSound.Play();
+            } else {
+                curContactCollision = null;
+            }
 
-            curContactCollision = collision;
-            hookCollisionSound.Play();
             onHookEnd.Invoke();
         }
     }

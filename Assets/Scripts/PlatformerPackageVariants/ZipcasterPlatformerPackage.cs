@@ -207,8 +207,8 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
             stopAllMomentum();
             runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed, startingDashSpeed));
 
-        } else if (curHooksLeft > 0){
-            reticle.gameObject.SetActive(true);
+        } else {
+            onHookDashEnd();
         }
     }
 
