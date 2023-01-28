@@ -1087,6 +1087,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7586790757312578381, guid: bd9562e2540c6044eb5265f1cc2aa1ca, type: 3}
   m_PrefabInstance: {fileID: 7586790757014603167}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1961941826 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6789220915750430121, guid: 4c8623e292e74b245ae2a6836e5056d7, type: 3}
+  m_PrefabInstance: {fileID: 6789220916919653956}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1961941827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961941826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc0e51eef950f040bc47c7170852d18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  windSpeed: -5
 --- !u!1 &1977830403
 GameObject:
   m_ObjectHideFlags: 0
@@ -1721,6 +1739,7 @@ GameObject:
   - component: {fileID: 2585489588324104346}
   - component: {fileID: 2585489588324104347}
   - component: {fileID: 2585489588324104345}
+  - component: {fileID: 2585489588324104348}
   m_Layer: 8
   m_Name: HorizontalRoom
   m_TagString: Untagged
@@ -1798,6 +1817,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 24.214521, y: 8.328012}
   m_EdgeRadius: 0
+--- !u!114 &2585489588324104348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2585489588324104344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d8bf69d06c110b408d0ad3e0125fb6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  windSpeed1: 0
+  windSpeed2: -5
+  windStayDuration: 2
+  windTransitionDuration: 0.5
 --- !u!4 &2585489589358590745
 Transform:
   m_ObjectHideFlags: 0
@@ -2114,6 +2149,10 @@ PrefabInstance:
     - target: {fileID: 741913782557702514, guid: 5849dd26e18a7074195c1253a3b8a71e, type: 3}
       propertyPath: m_Name
       value: Turret
+      objectReference: {fileID: 0}
+    - target: {fileID: 741913782557702514, guid: 5849dd26e18a7074195c1253a3b8a71e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 741913782557702518, guid: 5849dd26e18a7074195c1253a3b8a71e, type: 3}
       propertyPath: m_RootOrder

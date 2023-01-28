@@ -6,6 +6,7 @@ public class CameraZone : MonoBehaviour
 {
     [SerializeField]
     protected Camera cameraMock;
+    private IWindZone windZone;
     [SerializeField]
     private Transform[] possibleSpawnPoints;
     [SerializeField]
@@ -24,6 +25,7 @@ public class CameraZone : MonoBehaviour
             spawnPoint.gameObject.SetActive(false);
         }
 
+        windZone = GetComponent<IWindZone>();
         cameraMock.gameObject.SetActive(false);
         initialize();
     }
@@ -92,6 +94,12 @@ public class CameraZone : MonoBehaviour
             }
         }
 
+        PlatformerPackage playerPackage = playerCollider.GetComponent<PlatformerPackage>();
+        if (playerPackage != null) {
+            playerPackage.setWindZone(windZone);
+        }
+
         visited = true;
+
     }
 }

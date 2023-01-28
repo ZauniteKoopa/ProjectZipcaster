@@ -99,6 +99,7 @@ public class PlatformerPackage : MonoBehaviour
     private float inertiaRatio = 0f;
     private Coroutine runningInertiaSequence = null;
     private float runningInertiaForce = 0f;
+    private IWindZone roomWindZone = null;
 
     // Wall jump properties
     [Header("Wall Jump Properties")]
@@ -233,6 +234,7 @@ public class PlatformerPackage : MonoBehaviour
     protected virtual void handleMovement() {
         // Initially apply inertia to the current speed
         float currentSpeed = inertiaRatio * getCurrentWalkingSpeed();
+        currentSpeed += (roomWindZone != null) ? roomWindZone.getHorizontalWindSpeed() : 0f;
 
         // If you're moving, apply walk speed in inputted direction
         if (isMoving) {
@@ -628,6 +630,14 @@ public class PlatformerPackage : MonoBehaviour
     //  Post: returns a non-negative float representing the max waking speed
     protected virtual float getCurrentWalkingSpeed() {
         return walkSpeed;
+    }
+
+
+    // Main function to set the wind zone, overriding this wind zone
+    //  Pre: none
+    //  Post: if null, player is not affected by wind. Else, player will be effected by wind from the wind zone
+    public void setWindZone(IWindZone weather) {
+        roomWindZone = weather;
     }
 
 
