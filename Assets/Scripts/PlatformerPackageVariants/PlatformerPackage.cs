@@ -98,6 +98,7 @@ public class PlatformerPackage : MonoBehaviour
     // The direction that the unit wants to move
     private float inertiaRatio = 0f;
     private Coroutine runningInertiaSequence = null;
+    private float runningInertiaForce = 0f;
 
     // Wall jump properties
     [Header("Wall Jump Properties")]
@@ -478,6 +479,43 @@ public class PlatformerPackage : MonoBehaviour
     }
 
 
+    // Main helper function to run inertia sequence
+    //  Pre: effectedSpeed > 0 and duration > 0
+    //  Post: starts with magnitude intertia and linearly interpolates the inertia 
+    public void runInertiaSequence(float forceSpeed, float duration, bool rightDir) {
+        Debug.Assert(duration >= 0f && forceSpeed >= 0f);
+
+        float iRatio = forceSpeed / walkSpeed;
+        iRatio *= (rightDir) ? 1f : -1f;
+        runInertiaSequence(iRatio, duration);
+    }
+
+
+    // Main function to set constant inertia
+    //  Pre: player speed >= 0
+    //  Post: inertia will be set to this. THE ONUS IS ON THE SETTER TO RESET IF THE PLAYER DOESN'T DIE
+    public void setConstantHorizontalForce(float forceSpeed, bool rightDir) {
+        Debug.Assert(forceSpeed >= 0f);
+        float iRatio = forceSpeed / walkSpeed;
+        iRatio *= (rightDir) ? 1f : -1f;
+
+        // Stop inertia fade out if there's one running
+        if (runningInertiaSequence != null) {
+            StopCoroutine(runningInertiaSequence);
+        }
+
+        runningInertiaForce = iRatio;
+        inertiaRatio = iRatio;
+    }
+
+
+    // Main function to reapply horizontal force that is currently running on this package
+    //  Post: reapplies force if there is any
+    protected void reapplyRunningHorizontalForce() {
+        inertiaRatio = runningInertiaForce;
+    }
+
+
     // Main sequence to do intertia interpolation for this unit
     //  Pre: intertiaMagnitude is the magnitude the intertia is effected, duration is how long the inertia is interpolated to 0
     //  Post: starts with magnitude intertia and linearly interpolates the inertia 
@@ -598,6 +636,7 @@ public class PlatformerPackage : MonoBehaviour
     //  Post: stops all running coroutines in this function
     public virtual void reset() {
         stopAllMomentum();
+        runningInertiaForce = 0f;
 
         if (currentJumpBufferSequence != null) {
             StopCoroutine(currentJumpBufferSequence);

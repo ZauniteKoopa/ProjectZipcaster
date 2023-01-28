@@ -216,6 +216,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main function to handle the event when the hook dash ends
     private void onHookDashEnd() {
         hook.reset();
+        reapplyRunningHorizontalForce();
 
         if (curHooksLeft > 0) {
             reticle.gameObject.SetActive(true);
