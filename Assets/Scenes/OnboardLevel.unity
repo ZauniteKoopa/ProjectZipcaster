@@ -141,11 +141,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7586790757312578381, guid: bd9562e2540c6044eb5265f1cc2aa1ca, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.07
+      value: 0.67
       objectReference: {fileID: 0}
     - target: {fileID: 7586790757312578381, guid: bd9562e2540c6044eb5265f1cc2aa1ca, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.73
+      value: 5.27
       objectReference: {fileID: 0}
     - target: {fileID: 7586790757312578381, guid: bd9562e2540c6044eb5265f1cc2aa1ca, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8510,6 +8510,7 @@ MonoBehaviour:
   possibleSpawnPoints:
   - {fileID: 856601315}
   - {fileID: 1796927697}
+  lockedDoors: []
   minLocalX: -1.04
   maxLocalX: 1.74
   minLocalY: 0
@@ -11739,13 +11740,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: ZipcasterPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 4349017326146152972, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
+      propertyPath: dashMomentum
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349017326146152972, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
+      propertyPath: momentumDuration
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152973, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152973, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.3
+      value: -17.8
       objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152973, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: m_LocalPosition.y
