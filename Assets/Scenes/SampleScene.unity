@@ -1831,7 +1831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   windSpeed1: 0
-  windSpeed2: -5
+  windSpeed2: 0
   windStayDuration: 2
   windTransitionDuration: 0.5
 --- !u!4 &2585489589358590745

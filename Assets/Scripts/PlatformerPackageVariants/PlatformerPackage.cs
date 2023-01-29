@@ -249,8 +249,9 @@ public class PlatformerPackage : MonoBehaviour
         // Check Collisions - if you're being blocked by something to stop movement and establish wallGrabState
         IBlockerSensor opposingBlocker = (currentSpeed < 0f) ? leftSensor : rightSensor;
         if (Mathf.Abs(currentSpeed) > 0.1f) {
-            edgeAdjustment(opposingBlocker);
+            edgeAdjustment(currentSpeed > 0f);
         }
+
         if (opposingBlocker.isBlocked()) {
             currentSpeed = 0f;
         }
@@ -270,12 +271,20 @@ public class PlatformerPackage : MonoBehaviour
     }
 
 
-    // Main function to check for edge detection
+    // Main function to check for edge detection given a vector
+    //  Pre: a bool representing if it's moving to the right or to the left
     //  Post: will adjust the player's verticle position if it's within edge threshold
-    private void edgeAdjustment(IBlockerSensor blockSensor) {
-        // If block sensor is actually hitting something, adjust
-        if (blockSensor.isBlocked()) {
-            float blockerFloorPos = blockSensor.getMaxFloorPosition();
+    private void edgeAdjustment(bool goingRight) {
+        // Create ray cast
+        Vector2 rayPosOffsetDir = (goingRight) ? Vector2.right : Vector2.left;
+        Vector2 rayPos = (Vector2)transform.position + (0.6f * transform.lossyScale.x * rayPosOffsetDir) + (0.5f * transform.lossyScale.y * Vector2.up);
+        float rayDist = transform.lossyScale.y * 0.98f;    
+
+        RaycastHit2D hit = Physics2D.Raycast(rayPos, Vector2.down, rayDist, collisionMask);
+
+        // Adjust if there's a collision
+        if (hit.collider) {
+            float blockerFloorPos = hit.point.y;
             float playerFeetPos = transform.position.y - (0.5f * transform.lossyScale.y);
 
             bool edgeHigher = blockerFloorPos > playerFeetPos;
