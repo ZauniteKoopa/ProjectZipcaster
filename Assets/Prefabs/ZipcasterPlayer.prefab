@@ -3345,8 +3345,8 @@ MonoBehaviour:
   collisionZipMask:
     serializedVersion: 2
     m_Bits: 8
-  dashMomentum: 1.5
-  momentumDuration: 0.5
+  dashMomentum: 1.6
+  momentumDuration: 0.6
   dashCancelJumpHeight: 2
   minVerticalDashCancelReq: 0.3
   maxCloseDistance: 0.6
