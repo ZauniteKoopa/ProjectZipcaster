@@ -21,6 +21,7 @@ public class CrumblingPlatform : IDynamicPlatform
     // Runtime variables
     private bool isSolid = true;
     private Collider2D platformCollider;
+    private AudioSource crumblePlatformSpeaker = null;
 
     
     // On awake, initialize solid color to the current color of the sprite currently
@@ -30,6 +31,11 @@ public class CrumblingPlatform : IDynamicPlatform
 
         if (platformCollider == null) {
             Debug.LogError("no collider attached to this crumbling platform");
+        }
+
+        crumblePlatformSpeaker = GetComponent<AudioSource>();
+        if (crumblePlatformSpeaker == null) {
+            Debug.LogWarning("No speaker attached to crumbling platform. Crumbling platform will not make any noise");
         }
     }
 
@@ -48,6 +54,11 @@ public class CrumblingPlatform : IDynamicPlatform
         isSolid = false;
         platformCollider.enabled = false;
         GetComponent<SpriteRenderer>().color = ghostColor;
+        
+        // Play crumble noise
+        if (crumblePlatformSpeaker != null) {
+            crumblePlatformSpeaker.Play();
+        }
 
         // Wait disappear duration
         yield return new WaitForSeconds(disappearTime);

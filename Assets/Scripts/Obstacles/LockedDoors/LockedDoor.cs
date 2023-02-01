@@ -17,6 +17,7 @@ public class LockedDoor : MonoBehaviour
     private Vector3 closedPosition;
     private Vector3 openPosition;
     private int locksLeft;
+    private AudioSource unlockedSpeaker;
 
     private Coroutine runningOpeningSequence = null;
 
@@ -27,6 +28,11 @@ public class LockedDoor : MonoBehaviour
         // Error check
         if (doorLocks.Length <= 0 || doorLocks == null) {
             Debug.LogError("No locks attached to this locked door");
+        }
+
+        unlockedSpeaker = GetComponent<AudioSource>();
+        if (unlockedSpeaker == null) {
+            Debug.LogWarning("No speaker attached to this locked door: no sound will come out when you unlock it!");
         }
 
         // Set up lock state
@@ -78,6 +84,10 @@ public class LockedDoor : MonoBehaviour
     private IEnumerator openingSequence() {
         float openTime = Vector3.Distance(closedPosition, openPosition) / openingSpeed;
         float timer = 0f;
+
+        if (unlockedSpeaker != null) {
+            unlockedSpeaker.Play();
+        }
 
         while (timer < openTime) {
             yield return 0;

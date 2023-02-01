@@ -12,6 +12,8 @@ public class TriggerLock : AbstractLock
     private SpriteRenderer render;
     private bool locked = true;
 
+    private AudioSource unlockSpeaker;
+
 
     // ON awake, initialize variables
     private void Awake() {
@@ -19,6 +21,11 @@ public class TriggerLock : AbstractLock
 
         if (render == null) {
             Debug.LogError("No renderer attached to this trigger lock");
+        }
+
+        unlockSpeaker = GetComponent<AudioSource>();
+        if (unlockSpeaker == null) {
+            Debug.LogWarning("No speaker attached to this lock: no sound will come out when you unlock it!");
         }
 
         render.color = lockedColor;
@@ -42,6 +49,10 @@ public class TriggerLock : AbstractLock
 
         locked = false;
         render.color = unlockedColor;
+
+        if (unlockSpeaker != null) {
+            unlockSpeaker.Play();
+        }
     }
 
 

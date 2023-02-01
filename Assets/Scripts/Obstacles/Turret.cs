@@ -22,6 +22,7 @@ public class Turret : MonoBehaviour
     private Color anticipationColor = Color.black;
     [SerializeField]
     private Color firedColor = Color.black;
+    private AudioSource fireSpeaker = null;
     private SpriteRenderer render;
 
     [Header("Projectile Properties")]
@@ -49,6 +50,11 @@ public class Turret : MonoBehaviour
         if (render == null) {
             Debug.LogError("No sprite renderer component on turret!");
         }
+
+        fireSpeaker = GetComponent<AudioSource>();
+        if (fireSpeaker == null) {
+            Debug.LogWarning("No speaker attached to cannon, cannon will not make sounds when firing");
+        }
     }
 
 
@@ -70,6 +76,12 @@ public class Turret : MonoBehaviour
             MovingProjectile curProj = Object.Instantiate(cannonBall, transform.position + Vector3.forward, Quaternion.identity);
             curProj.startBullet(bulletSpeed, transform.right);
             render.color = firedColor;
+
+            // Play sound
+            if (fireSpeaker != null) {
+                fireSpeaker.Play();
+            }
+            
             yield return new WaitForSeconds(secondsBetweenShots);
         }
     }

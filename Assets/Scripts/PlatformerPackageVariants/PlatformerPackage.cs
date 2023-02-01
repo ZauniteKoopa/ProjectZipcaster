@@ -8,7 +8,7 @@ public class PlatformerPackage : MonoBehaviour
 {
     // Unity events for animations
     public UnityEvent platformerLandEvent;
-
+    private PlatformerAudioManager audioManager;
 
     [Header("Player Package Components")]
     [SerializeField]
@@ -157,12 +157,10 @@ public class PlatformerPackage : MonoBehaviour
             Debug.LogError("ONE OF THE HORIZONTAL SENSORS IS NULL");
         }
 
-        // Set current fall velocity to zero
-        if (gravityAcceleration <= 0f) {
-            Debug.LogError("GRAVITY IS NOT GRATER THAN 0");
-        }
-        if (longJumpHeight <= 0f || stoppedJumpHeight <= 0f) {
-            Debug.LogError("JUMP HEIGHT IS NOT GREATER THAN 0");
+        // Check audio
+        audioManager = GetComponent<PlatformerAudioManager>();
+        if (audioManager == null) {
+            Debug.LogWarning("No audio manager found for player. No sound will come out for platformer actions");
         }
 
         curFallVelocity = 0f;
@@ -304,6 +302,7 @@ public class PlatformerPackage : MonoBehaviour
     private void updateWallGrabState() {
         // If you're not in the air OR curFallVelocity > 0f, set all wall grab states to false
         if (!falling || curFallVelocity > 0f) {
+            audioManager.setWallSlideSound(false);
             curGrabbedWall = null;
         }
 
@@ -312,6 +311,7 @@ public class PlatformerPackage : MonoBehaviour
         {
             // Check if you're even next to the wall anymore
             if (!curGrabbedWall.isBlocked()) {
+                audioManager.setWallSlideSound(false);
                 curGrabbedWall = null;
             }
 
@@ -321,6 +321,7 @@ public class PlatformerPackage : MonoBehaviour
                                            (curGrabbedWall == rightSensor && walkingDirection < 0f);
 
                 if (movingOpposingDirection) {
+                    audioManager.setWallSlideSound(false);
                     curGrabbedWall = null;
                 }
             }
@@ -331,6 +332,7 @@ public class PlatformerPackage : MonoBehaviour
             IBlockerSensor opposingBlocker = (walkingDirection < 0f) ? leftSensor : rightSensor;
             if (opposingBlocker.isBlocked()) {
                 curGrabbedWall = opposingBlocker;
+                audioManager.setWallSlideSound(true);
                 stopAllMomentum();
             }
         }
@@ -379,6 +381,7 @@ public class PlatformerPackage : MonoBehaviour
             // If you're allowed to jump in the current state, then jump
             if (!falling) {
                 falling = true;
+                audioManager.playJumpSound();
                 curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, longJumpHeight);
 
             // If you're grabbing a wall, wall jump with inertia
@@ -389,11 +392,13 @@ public class PlatformerPackage : MonoBehaviour
                 runInertiaSequence(inertiaMagnitude, wallInertiaEffectDuration);
 
                 // Apply the jump
+                audioManager.playJumpSound();
                 curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, wallJumpHeight);
 
             // If you're in the air and you have extra jumps
             } else if (extraJumpsLeft > 0) {
                 extraJumpsLeft--;
+                audioManager.playJumpSound();
                 curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, extraJumpHeight);
 
                 if (extraJumpsCancelsMomentum) {
@@ -443,6 +448,7 @@ public class PlatformerPackage : MonoBehaviour
             float usedJumpHeight = (holdJumpButton) ? longJumpHeight : stoppedJumpHeight;
 
             falling = true;
+            audioManager.playJumpSound();
             curFallVelocity = calculateStartingJumpVelocity(-gravityAcceleration, usedJumpHeight);
         }
 

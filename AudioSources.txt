@@ -1,0 +1,23 @@
+*** Player Sounds ***
+- Player_Jump: https://freesound.org/people/Leszek_Szary/sounds/146726/
+- Player_Jump_Land: https://freesound.org/people/laurenmg95/sounds/386691/
+- Player_Zip: https://freesound.org/people/TheLittleCrow/sounds/496509/
+- Player_Death: The minecraft death sound
+- Player_Wall_Slide: https://freesound.org/people/xserra/sounds/77351/
+
+
+*** Obstacles ***
+- Cannon_Fire: https://freesound.org/people/laurenmg95/sounds/386691/
+- Laser_Fire: https://freesound.org/people/jobro/sounds/35685/
+- Continuous_Running_Laser: https://freesound.org/people/SamsterBirdies/sounds/470903/
+
+
+*** Platforms ***
+Trampoline_Jump: https://freesound.org/people/juskiddink/sounds/140867/
+Crumble_Platform_Fall: https://freesound.org/people/jorickhoofd/sounds/169555/
+Treadmill_Running: https://freesound.org/people/adamlhumphreys/sounds/115384/
+
+
+*** Doors ***
+Trigger_Door_Lock_Touch: https://freesound.org/people/Leszek_Szary/sounds/191591/
+Wooden_Door_Open: https://freesound.org/people/Sergenious/sounds/55820/
