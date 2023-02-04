@@ -5,9 +5,6 @@ using UnityEngine.Events;
 
 public class OneHitPlatformerStatus : IPlatformerStatus
 {
-    // Main UI component
-    [SerializeField]
-    PlayerUI mainPlayerUI = null;
     AudioSource speaker = null;
 
     // Main variables concerning dying
@@ -47,6 +44,7 @@ public class OneHitPlatformerStatus : IPlatformerStatus
     private void Awake() {
         platformerPackage = GetComponent<PlatformerPackage>();
         speaker = GetComponent<AudioSource>();
+        mainPlayerUI.displayKeys(0);
 
         if (platformerPackage == null) {
             Debug.LogError("No platformer package connected to this character");

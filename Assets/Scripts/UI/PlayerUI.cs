@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Assertions;
+using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -10,6 +12,19 @@ public class PlayerUI : MonoBehaviour
     private Image blackScreen = null;
 
     private Coroutine runningBlackScreenSequence;
+
+    [Header("Key Display")]
+    [SerializeField]
+    private TMP_Text keysDisplay = null;
+
+
+
+    // Main public function to display keys
+    public void displayKeys(int numKeys) {
+        Debug.Assert(numKeys >= 0);
+
+        keysDisplay.text = "" + numKeys;
+    }
 
 
     // Main public function to run black screen fade sequence
