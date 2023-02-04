@@ -62,19 +62,6 @@ public class PlatformerPackage : MonoBehaviour
     private float curFallVelocity = 0f;
     private Coroutine currentJumpBufferSequence = null;
 
-    // Accessible elements for animators
-    public virtual bool isJumping {
-        get {return falling && !isGrabbingWall();}
-    }
-
-    public float jumpScaleStatus {
-        get { return Mathf.Clamp(Mathf.Abs(curFallVelocity) / calculateStartingJumpVelocity(-gravityAcceleration, longJumpHeight), 0f, 1f);}
-    }
-
-    public bool grounded {
-        get { return !falling; }
-    }
-
     [Header("Move properties")]
     [SerializeField]
     [Min(0f)]
@@ -139,6 +126,27 @@ public class PlatformerPackage : MonoBehaviour
     [Min(0.01f)]
     private float edgeAdjustmentOffset = 0.1f;
 
+
+    // Accessible elements for animators
+    public virtual bool isJumping {
+        get {return falling && !isGrabbingWall();}
+    }
+
+    public float jumpScaleStatus {
+        get { return Mathf.Clamp(Mathf.Abs(curFallVelocity) / calculateStartingJumpVelocity(-gravityAcceleration, longJumpHeight), 0f, 1f);}
+    }
+
+    public bool grounded {
+        get { return !falling; }
+    }
+
+    public float getVerticalSpeed {
+        get { return curFallVelocity; }
+    }
+
+    public float getHorizontalAxis {
+        get { return (!isMoving) ? 0f : walkingDirection; }
+    }
 
 
     // Start is called before the first frame update
@@ -342,7 +350,7 @@ public class PlatformerPackage : MonoBehaviour
 
     // Main boolean to check if you're grabbing a wall
     //  Post: returns a bool to check if you're sliding down a wall
-    private bool isGrabbingWall() {
+    public bool isGrabbingWall() {
         return curGrabbedWall != null;
     }
 

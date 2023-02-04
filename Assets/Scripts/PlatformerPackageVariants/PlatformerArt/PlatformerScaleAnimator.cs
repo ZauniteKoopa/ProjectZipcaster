@@ -18,6 +18,8 @@ public class PlatformerScaleAnimator : MonoBehaviour
 
     private Vector3 originalScale;
     private Coroutine runningLandingSequence = null;
+    private Animator animator;
+    private SpriteRenderer render;
 
 
     // On awake, check
@@ -28,10 +30,23 @@ public class PlatformerScaleAnimator : MonoBehaviour
 
         platformer.platformerLandEvent.AddListener(onPlatformerLand);
         originalScale = transform.localScale;
+
+        animator = GetComponent<Animator>();
+        if (animator == null) {
+            Debug.LogWarning("No animator attached. Please attach an animator to animate platformer");
+        }
+
+        render = GetComponent<SpriteRenderer>();
+        if (render == null) {
+            Debug.LogError("No sprite render attached to animator. Please attach something that I can animate");
+        }
     }
     
     // On update, render the scale
     private void Update() {
+        updateAnimatorVariables();
+        render.flipX = (platformer.forwardDir != Vector2.right);
+
         if (platformer.isJumping) {
             // Reset runningLandingSequence if that's running
             if (runningLandingSequence != null) {
@@ -83,4 +98,18 @@ public class PlatformerScaleAnimator : MonoBehaviour
         transform.localScale = originalScale;
         runningLandingSequence = null;
     }
+
+
+    // Main function to update animator variables
+    //  Pre: none
+    //  Post: updates animator variables based on platformer package state
+    private void updateAnimatorVariables() {
+        if (animator != null) {
+            animator.SetBool("Grounded", platformer.grounded);
+            animator.SetBool("Wallgrabbing", platformer.isGrabbingWall());
+            animator.SetFloat("HorizontalSpeed", Mathf.Abs(platformer.getHorizontalAxis));
+            animator.SetFloat("VerticalSpeed", platformer.getVerticalSpeed);
+        }
+    }
+
 }
