@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class ZipcasterPlatformerPackage : PlatformerPackage
 {
@@ -75,10 +76,43 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     private int curHooksLeft;
     private Coroutine runningZipSequence;
     private Vector2 zipDir;
+    private Vector2 hookDir;
 
     // Accessible elements for animators
     public override bool isJumping {
         get {return base.isJumping && runningZipSequence == null;}
+    }
+
+    public Vector2 currentMouseDir {
+        get {
+            Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
+            Vector2 rayDir = (worldPoint - transform.position).normalized;
+            if (aimAssist != null) {
+                rayDir = aimAssist.adjustAim(rayDir, transform.position);
+            }
+
+            return rayDir;
+        }
+    }
+
+
+    public override Vector2 forwardDir {
+        get {
+            if (isDashing || isHooking) {
+                Vector2 usedVector = (isDashing) ? zipDir : hookDir;
+                return (Vector2)Vector3.Project(usedVector, Vector3.right).normalized;
+            } else {
+                return base.forwardDir;
+            }
+        }
+    }
+
+    public bool isDashing {
+        get { return runningZipSequence != null; }
+    }
+
+    public bool isHooking {
+        get { return hookFiring; }
     }
 
 
@@ -105,7 +139,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
             Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
 
             // Calculate hook direction and fire hook
-            Vector2 hookDir = (worldPoint - transform.position).normalized;
+            hookDir = (worldPoint - transform.position).normalized;
             if (aimAssist != null) {
                 hookDir = aimAssist.adjustAim(hookDir, transform.position);
             }
@@ -114,7 +148,6 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
                 curHooksLeft--;
             }
             hookFiring = true;
-
             reticle.gameObject.SetActive(false);
         }
     }
@@ -167,10 +200,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     private void updateReticlePosition() {
         // Update reticle position: calculate components for ray
         Vector3 worldPoint = mainCamera.ScreenToWorldPoint(mouseAimPosition);
-        Vector2 rayDir = (worldPoint - transform.position).normalized;
-        if (aimAssist != null) {
-            rayDir = aimAssist.adjustAim(rayDir, transform.position);
-        }
+        Vector2 rayDir = currentMouseDir;
 
         float rayDist = maxZipHookDistance - 0.1f;
 

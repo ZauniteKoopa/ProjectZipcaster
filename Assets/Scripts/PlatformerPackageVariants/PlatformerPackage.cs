@@ -78,7 +78,7 @@ public class PlatformerPackage : MonoBehaviour
     private bool isMoving = false;
     private float walkingDirection = 0f;
     private bool facingRight = true;
-    public Vector2 forwardDir {
+    public virtual Vector2 forwardDir {
         get {return (facingRight) ? transform.right : -1f * transform.right;}
     }
 

@@ -18,7 +18,7 @@ public class PlatformerScaleAnimator : MonoBehaviour
 
     private Vector3 originalScale;
     private Coroutine runningLandingSequence = null;
-    private Animator animator;
+    protected Animator animator;
     private SpriteRenderer render;
 
 
@@ -44,8 +44,8 @@ public class PlatformerScaleAnimator : MonoBehaviour
     
     // On update, render the scale
     private void Update() {
-        updateAnimatorVariables();
-        render.flipX = (platformer.forwardDir != Vector2.right);
+        updateAnimatorVariables(platformer);
+        render.flipX = (isFacingLeft(platformer));
 
         if (platformer.isJumping) {
             // Reset runningLandingSequence if that's running
@@ -103,13 +103,25 @@ public class PlatformerScaleAnimator : MonoBehaviour
     // Main function to update animator variables
     //  Pre: none
     //  Post: updates animator variables based on platformer package state
-    private void updateAnimatorVariables() {
+    protected virtual void updateAnimatorVariables(PlatformerPackage p) {
+        Debug.Assert(p != null);
+
         if (animator != null) {
-            animator.SetBool("Grounded", platformer.grounded);
-            animator.SetBool("Wallgrabbing", platformer.isGrabbingWall());
-            animator.SetFloat("HorizontalSpeed", Mathf.Abs(platformer.getHorizontalAxis));
-            animator.SetFloat("VerticalSpeed", platformer.getVerticalSpeed);
+            animator.SetBool("Grounded", p.grounded);
+            animator.SetBool("Wallgrabbing", p.isGrabbingWall());
+            animator.SetFloat("HorizontalSpeed", Mathf.Abs(p.getHorizontalAxis));
+            animator.SetFloat("VerticalSpeed", p.getVerticalSpeed);
         }
+    }
+
+
+    // Main function to check if whether or not the sprite will face left
+    //  Pre: platformer != null
+    //  Post: returns a boolean to check if platformer is facing left
+    protected virtual bool isFacingLeft(PlatformerPackage p) {
+        Debug.Assert(p != null);
+
+        return p.forwardDir != Vector2.right;
     }
 
 }
