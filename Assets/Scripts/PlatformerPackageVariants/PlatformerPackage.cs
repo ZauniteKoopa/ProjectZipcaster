@@ -281,24 +281,31 @@ public class PlatformerPackage : MonoBehaviour
     //  Pre: a bool representing if it's moving to the right or to the left
     //  Post: will adjust the player's verticle position if it's within edge threshold
     private void edgeAdjustment(bool goingRight) {
-        // Create ray cast
+        // Create ray cast variables
         Vector2 rayPosOffsetDir = (goingRight) ? Vector2.right : Vector2.left;
         Vector2 rayPos = (Vector2)transform.position + (0.6f * transform.lossyScale.x * rayPosOffsetDir) + (0.5f * transform.lossyScale.y * Vector2.up);
-        float rayDist = transform.lossyScale.y * 0.98f;    
+        float rayDist = transform.lossyScale.y * 0.98f;
 
-        RaycastHit2D hit = Physics2D.Raycast(rayPos, Vector2.down, rayDist, collisionMask);
+        // Check that area between player and ray point is not blocked
+        RaycastHit2D hit = Physics2D.Raycast(rayPos,
+                                             ((Vector2)transform.position - rayPos).normalized,
+                                             Vector2.Distance(transform.position, rayPos),
+                                             collisionMask);
+        if (!hit.collider) {
+            hit = Physics2D.Raycast(rayPos, Vector2.down, rayDist, collisionMask);
 
-        // Adjust if there's a collision
-        if (hit.collider) {
-            float blockerFloorPos = hit.point.y;
-            float playerFeetPos = transform.position.y - (0.5f * transform.lossyScale.y);
+            // Adjust if there's a collision
+            if (hit.collider) {
+                float blockerFloorPos = hit.point.y;
+                float playerFeetPos = transform.position.y - (0.5f * transform.lossyScale.y);
 
-            bool edgeHigher = blockerFloorPos > playerFeetPos;
-            bool edgeInRange = blockerFloorPos - playerFeetPos < (transform.lossyScale.y * edgeTransversibleThreshold);
+                bool edgeHigher = blockerFloorPos > playerFeetPos;
+                bool edgeInRange = blockerFloorPos - playerFeetPos < (transform.lossyScale.y * edgeTransversibleThreshold);
 
-            if (edgeHigher && edgeInRange) {
-                float adjustMagnitude = (blockerFloorPos + edgeAdjustmentOffset) - playerFeetPos;
-                transform.Translate(adjustMagnitude * Vector2.up);
+                if (edgeHigher && edgeInRange) {
+                    float adjustMagnitude = (blockerFloorPos + edgeAdjustmentOffset) - playerFeetPos;
+                    transform.Translate(adjustMagnitude * Vector2.up);
+                }
             }
         }
     }
