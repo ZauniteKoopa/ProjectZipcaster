@@ -35,21 +35,6 @@ public class HorizontalScrollingCameraZone : CameraZone
         // If player captured and camera isn't in transition mode, set the camera to player's position
         if (playerTransform != null && !PlayerCameraController.isCameraTransitioning()) {
             Transform cameraTransform = cameraMock.transform;
-
-            // calculate X
-            float transitionX = cameraTransform.localPosition.x;
-            if (!lockX) {
-                float playerLocalX = transform.InverseTransformPoint(playerTransform.transform.position).x;
-                transitionX = Mathf.Clamp(playerLocalX, minLocalX, maxLocalX);
-            }
-
-            // Calculate Y
-            float transitionY = cameraTransform.localPosition.x;
-            if (!lockY) {
-                float playerLocalY = transform.InverseTransformPoint(playerTransform.transform.position).y;
-                transitionY = Mathf.Clamp(playerLocalY, minLocalY, maxLocalY);
-            }
-
             Vector3 transitionPoint = getTransitionPoint();
 
             // Move camera instantly
@@ -66,6 +51,7 @@ public class HorizontalScrollingCameraZone : CameraZone
         float transitionX = cameraTransform.localPosition.x;
         if (!lockX) {
             float playerLocalX = transform.InverseTransformPoint(playerTransform.transform.position).x;
+            transitionX = Mathf.Clamp(playerLocalX, minLocalX, maxLocalX);
         }
 
         // Calculate Y
