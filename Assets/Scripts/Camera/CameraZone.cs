@@ -11,7 +11,10 @@ public class CameraZone : MonoBehaviour
     private Transform[] possibleSpawnPoints;
     [SerializeField]
     private LockedDoor[] lockedDoors;
+
     private bool visited = false;
+    private GameObject ambientSoundPlayer;
+    private HashSet<string> ambientSoundRecord = new HashSet<string>();
 
 
     // On awake, disable cameraMock
@@ -27,6 +30,12 @@ public class CameraZone : MonoBehaviour
 
         windZone = GetComponent<IWindZone>();
         cameraMock.gameObject.SetActive(false);
+
+        // Set up ambient sound player
+        ambientSoundPlayer = new GameObject("RoomAmbientSpeaker");
+        ambientSoundPlayer.transform.parent = transform;
+        ambientSoundPlayer.SetActive(false);
+
         initialize();
     }
 
@@ -38,7 +47,23 @@ public class CameraZone : MonoBehaviour
     // On trigger enter, set camera to this position
     private void OnTriggerEnter2D(Collider2D collider) {
         if (collider.tag == "Player") {
+            ambientSoundPlayer.SetActive(true);
             OnPlayerTrigger(collider);
+        }
+
+        StaticAmbientAudioComponent extraStageAudio = collider.GetComponent<StaticAmbientAudioComponent>();
+        if (extraStageAudio != null && !ambientSoundRecord.Contains(extraStageAudio.ambientSound.name)) {
+            ambientSoundRecord.Add(extraStageAudio.ambientSound.name);
+            extraStageAudio.ambientSound.addAmbientSound(ambientSoundPlayer);
+        }
+    }
+
+
+    // On trigger exit, disconnect audio
+    private void OnTriggerExit2D(Collider2D collider) {
+        if (collider.tag == "Player") {
+            ambientSoundPlayer.SetActive(false);
+            OnPlayerExit(collider);
         }
     }
 
@@ -56,6 +81,10 @@ public class CameraZone : MonoBehaviour
         // Connect locked doors to player respawn event
         connectPlayerToRoom(collider);
     }
+
+
+    // Main function to handle when player exits zone
+    protected virtual void OnPlayerExit(Collider2D collider) {}
 
 
     // Main function to set spawn pont of player

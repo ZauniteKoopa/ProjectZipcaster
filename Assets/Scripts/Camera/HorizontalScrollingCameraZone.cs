@@ -84,9 +84,7 @@ public class HorizontalScrollingCameraZone : CameraZone
     }
 
 
-    private void OnTriggerExit2D(Collider2D collider) {
-        if (collider.tag == "Player") {
-            playerTransform = null;
-        }
+    protected override void OnPlayerExit(Collider2D collider) {
+        playerTransform = null;
     }
 }

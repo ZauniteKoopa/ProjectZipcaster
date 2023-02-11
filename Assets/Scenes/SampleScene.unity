@@ -1943,7 +1943,8 @@ GameObject:
   - component: {fileID: 2027893217}
   - component: {fileID: 2027893216}
   - component: {fileID: 2027893215}
-  m_Layer: 8
+  - component: {fileID: 2027893218}
+  m_Layer: 0
   m_Name: Room2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2019,6 +2020,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &2027893218
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027893214}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1001 &21263735120690766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2214,6 +2236,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GenericMapGrid
       objectReference: {fileID: 0}
+    - target: {fileID: 2225866086268423712, guid: f71cd399269d54243a1c5850655b1e40, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2225866086268423718, guid: f71cd399269d54243a1c5850655b1e40, type: 3}
       propertyPath: m_RootOrder
       value: 11
@@ -2256,6 +2282,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2225866086268423718, guid: f71cd399269d54243a1c5850655b1e40, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225866087281131691, guid: f71cd399269d54243a1c5850655b1e40, type: 3}
+      propertyPath: m_ColliderPaths.Array.size
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2333,7 +2363,7 @@ GameObject:
   - component: {fileID: 2585489588324104347}
   - component: {fileID: 2585489588324104345}
   - component: {fileID: 2585489588324104348}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: HorizontalRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3112,10 +3142,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Treadmill
       objectReference: {fileID: 0}
-    - target: {fileID: 6567942683629671545, guid: 08b27fc4b694a9840bd9fc4c47026175, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08b27fc4b694a9840bd9fc4c47026175, type: 3}
 --- !u!1001 &6789220916919653956
@@ -3300,10 +3326,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 363455758, guid: 6c11248e9ce70654aa1bf3c2ca6d5107, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4613264465668266762, guid: 6c11248e9ce70654aa1bf3c2ca6d5107, type: 3}
       propertyPath: m_Name
       value: LinearLaserDrone
