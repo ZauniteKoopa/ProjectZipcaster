@@ -19,6 +19,34 @@ public class ZipcasterAnimatorController : PlatformerScaleAnimator
     }
 
 
+    // Main function to update sprite transform
+    //  Pre: none
+    //  Post: Transform variables are updated based on variables from the platformer package
+    protected override void updateSpriteTransform(PlatformerPackage p) {
+        Debug.Assert(p != null);
+
+        base.updateSpriteTransform(p);
+
+        ZipcasterPlatformerPackage zPlatformer = p as ZipcasterPlatformerPackage;
+        Debug.Assert(zPlatformer != null);
+
+        // If dashing, set orientation of the player to the dash direction
+        if (zPlatformer.isDashing) {
+            Vector2 curDashDir = zPlatformer.dashDirection;
+
+            // In case of dashing left, flip the dashDir vector so that it considers flipX (the sprite won't go upside down)
+            if (curDashDir.x < 0f) {
+                curDashDir *= -1f;
+            }
+
+            transform.right = curDashDir;
+        } else {
+            transform.right = Vector2.right;
+        }
+
+    }
+
+
     // Main function to check if whether or not the sprite will face left
     //  Pre: platformer != null
     //  Post: returns a boolean to check if platformer is facing left

@@ -46,8 +46,15 @@ public class PlatformerScaleAnimator : MonoBehaviour
     private void Update() {
         updateAnimatorVariables(platformer);
         render.flipX = (isFacingLeft(platformer));
+        updateSpriteTransform(platformer);
+    }
 
-        if (platformer.isJumping) {
+
+    // Main function to update sprite transform
+    //  Pre: none
+    //  Post: Transform variables are updated based on variables from the platformer package
+    protected virtual void updateSpriteTransform(PlatformerPackage p) {
+        if (p.isJumping) {
             // Reset runningLandingSequence if that's running
             if (runningLandingSequence != null) {
                 StopCoroutine(runningLandingSequence);
@@ -55,7 +62,7 @@ public class PlatformerScaleAnimator : MonoBehaviour
             }
 
             // Calculate jump scale dynamically
-            float jumpState = platformer.jumpScaleStatus;
+            float jumpState = p.jumpScaleStatus;
 
             transform.localScale = new Vector3(originalScale.x * xScale.Evaluate(jumpState),
                                                 originalScale.y * yScale.Evaluate(jumpState),
