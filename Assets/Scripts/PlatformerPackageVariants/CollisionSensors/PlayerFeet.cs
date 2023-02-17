@@ -19,12 +19,14 @@ public class PlayerFeet : MonoBehaviour
     private readonly object groundLock = new object();
     private float maxTouchingGroundHeight = 0f;
     private HashSet<IDynamicPlatform> touchingDynamicPlatforms = new HashSet<IDynamicPlatform>();
+    private ContactPoint2D initialLandingContact;
 
 
     // Main event handler function to collect colliders as they enter the trigger box
     //  Pre: collision layers must be set because this considers all collisions possible
     //  Post: Increments numGround
-    private void OnTriggerEnter2D(Collider2D collider) {
+    private void OnCollisionEnter2D(Collision2D collision) {
+        Collider2D collider = collision.collider;
         int colliderLayer = collider.gameObject.layer;
 
         // Case in which collider is a platform
@@ -36,13 +38,15 @@ public class PlayerFeet : MonoBehaviour
             lock(groundLock) {
                 // Update max touching ground height
                 maxTouchingGroundHeight = (numGround == 0) ? curGroundHeight : Mathf.Max(maxTouchingGroundHeight, curGroundHeight);
+                bool wasNotGrounded = numGround == 0;
+                numGround++;
 
                 // If first time on ground after jumping, land
-                if (numGround == 0) {
+                if (wasNotGrounded) {
+                    initialLandingContact = collision.GetContact(0);
                     landingEvent.Invoke();
                 }
 
-                numGround++;
                 addDynamicPlatform(collider);
             }
         }
@@ -51,7 +55,8 @@ public class PlayerFeet : MonoBehaviour
     // Main event handler function to remove colliders when they exit the trigger box
     //  Pre: collision layers must be set because this considers all collisions possible
     //  Post: Decrements numGround
-    private void OnTriggerExit2D(Collider2D collider) {
+    private void OnCollisionExit2D(Collision2D collision) {
+        Collider2D collider = collision.collider;
         int colliderLayer = collider.gameObject.layer;
 
         if (colliderLayer == LayerMask.NameToLayer("Collisions")) {
@@ -136,5 +141,28 @@ public class PlayerFeet : MonoBehaviour
     public void setCoyoteTime(float cTime) {
         Debug.Assert(cTime >= 0f);
         coyoteTime = cTime;
+    }
+
+
+    // Main function to get offsetted position
+    //  Pre: playerPosition is the position of the player using this feet and offset is how much you want to be offset from the ground
+    //  Post: returns the new player position on landing
+    public Vector2 getAutomatedGroundPosition(Vector2 playerPosition, float offset) {
+        // If no landing contact right now, return player position as is
+        if (numGround == 0) {
+            return playerPosition;
+        }
+
+        // Get variables from contact point
+        Vector2 contactNormal = initialLandingContact.normal;
+        Vector2 contactPosition = initialLandingContact.point;
+
+        // Calculate the center point in which (playerPosition - centerPoint).dir == contactNormal
+        Vector2 distanceVector = playerPosition - contactPosition;
+        distanceVector = Vector3.Project(distanceVector, Vector2.Perpendicular(contactNormal));
+        Vector2 centerPoint = contactPosition + distanceVector;
+
+        // Now adjust the height from that center point and return that value
+        return centerPoint + (offset * contactNormal.normalized);
     }
 }

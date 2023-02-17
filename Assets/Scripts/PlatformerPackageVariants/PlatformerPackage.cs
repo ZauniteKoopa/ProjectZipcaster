@@ -56,6 +56,9 @@ public class PlatformerPackage : MonoBehaviour
     [SerializeField]
     [Min(0f)]
     private float ceilingKnockback = 1.3f;
+    [SerializeField]
+    [Range(0f, 0.075f)]
+    private float landingOffset = 0.05f;
 
     private bool falling = true;
     private bool holdJumpButton = true;
@@ -222,11 +225,14 @@ public class PlatformerPackage : MonoBehaviour
             float curDistDelta = curFallVelocity * Time.deltaTime;
 
             // Cast ray in that direction to check if you hit a floor so you don't glitch through (move to another function)
-            Vector3 mainRaycastPos = (curDistDelta > 0f) ? ceilingSensor.transform.position : feet.transform.position;
-            RaycastHit2D hit = Physics2D.Raycast(mainRaycastPos, Vector2.up, curDistDelta, collisionMask);
+            Transform verticalCollisionSensor = (curDistDelta > 0f) ? ceilingSensor.transform : feet.transform;
+            Vector3 mainBoxcastPos = verticalCollisionSensor.position;
+            Vector3 mainBoxcastSize = 0.5f * verticalCollisionSensor.lossyScale;
+            
+            RaycastHit2D hit = Physics2D.BoxCast(mainBoxcastPos, mainBoxcastSize, 0f, Vector2.up, curDistDelta, collisionMask);
             if (hit.collider != null) {
                 float dir = Mathf.Sign(curDistDelta);
-                curDistDelta = dir * hit.distance;
+                curDistDelta = dir * (hit.distance - 0.02f);
             }
 
             // Actually translate the function
@@ -368,6 +374,8 @@ public class PlatformerPackage : MonoBehaviour
         curFallVelocity = 0f;
         extraJumpsLeft = extraJumps;
         falling = false;
+
+        transform.position = feet.getAutomatedGroundPosition(transform.position, (transform.lossyScale.y * 0.5f) + landingOffset);
 
         refreshResourcesOnLanding();
         platformerLandEvent.Invoke();
