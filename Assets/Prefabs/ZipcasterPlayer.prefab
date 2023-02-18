@@ -2421,7 +2421,7 @@ MonoBehaviour:
   maxZipHookDistance: 5
   zipcastMaxFallSpeed: 2
   zipcastHorizontalSpeedReduction: 0.3
-  unlimitedHooks: 1
+  unlimitedHooks: 0
   numHookCasts: 2
   hookLayerMask:
     serializedVersion: 2
