@@ -135,11 +135,36 @@ public class GrapplingHook : MonoBehaviour
         
         // If collision happened, set collision point to the contact point offseted by the normal
         if (curContactCollision != null) {
-            Vector2 contactPoint = curContactCollision.GetContact(0).point;
-            Vector2 contactNormal = curContactCollision.GetContact(0).normal;
-            Vector2 ownerScale = owner.lossyScale;
-            collisionPoint = contactPoint + 0.55f * new Vector2(ownerScale.x * contactNormal.x, ownerScale.y * contactNormal.y);
+            AdjustedLaunchPoint adjLaunchPoint = curContactCollision.collider.GetComponent<AdjustedLaunchPoint>();
+
+            if (adjLaunchPoint != null) {
+                collisionPoint = adjLaunchPoint.getHookDestination();
+            } else {
+                Vector2 contactPoint = curContactCollision.GetContact(0).point;
+                Vector2 contactNormal = curContactCollision.GetContact(0).normal;
+                Vector2 ownerScale = owner.lossyScale;
+                collisionPoint = contactPoint + 0.55f * new Vector2(ownerScale.x * contactNormal.x, ownerScale.y * contactNormal.y);
+            }
         }
+
+
         return curContactCollision != null;
+    }
+
+
+    // Main function to get upward launch height after hook dash
+    //  Post: returns a float >= 0 representing the launch height after the hookDash. 0 if no launch
+    public float getUpwardLaunchHeight() {
+        if (curContactCollision != null) {
+            AdjustedLaunchPoint adjLaunchPoint = curContactCollision.collider.GetComponent<AdjustedLaunchPoint>();
+
+            if (adjLaunchPoint != null) {
+                float launchHeight = adjLaunchPoint.getUpwardLaunchHeight();
+                Debug.Assert(launchHeight >= 0f);
+                return launchHeight;
+            }
+        }
+
+        return 0f;
     }
 }

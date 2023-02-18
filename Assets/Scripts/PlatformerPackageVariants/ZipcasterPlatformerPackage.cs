@@ -75,8 +75,10 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     private bool hookFiring = false;
     private int curHooksLeft;
     private Coroutine runningZipSequence;
+
     private Vector2 zipDir;
     private Vector2 hookDir;
+    private float postDashLaunchHeight = 0f;
 
     // Accessible elements for animators
     public override bool isJumping {
@@ -232,6 +234,8 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
         hookFiring = false;
 
         if (hook.hookedEnviornment(out collisionPoint)) {
+            postDashLaunchHeight = hook.getUpwardLaunchHeight();
+
             // Run sequence
             if (runningZipSequence != null) {
                 StopCoroutine(runningZipSequence);
@@ -248,13 +252,19 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
 
     // Main function to handle the event when the hook dash ends
-    private void onHookDashEnd() {
+    private void onHookDashEnd(bool cancelled = false) {
+        if (!cancelled) {
+            launchVertically(postDashLaunchHeight);
+        }
+
         hook.reset();
         reapplyRunningHorizontalForce();
 
         if (curHooksLeft > 0) {
             reticle.gameObject.SetActive(true);
         }
+
+        postDashLaunchHeight = 0f;
     }
 
 
@@ -367,7 +377,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
                 }
             }
 
-            onHookDashEnd();
+            onHookDashEnd(true);
         }
     }
 

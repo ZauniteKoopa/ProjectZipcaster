@@ -651,7 +651,7 @@ public class PlatformerPackage : MonoBehaviour
     //  Pre: acceleration should ALWAYS be negative and jump height should ALWAYS be positive
     //  Post: returns the starting velocity of the jump
     private float calculateStartingJumpVelocity(float acceleration, float jumpHeight) {
-        Debug.Assert(acceleration < 0f && jumpHeight > 0f);
+        Debug.Assert(acceleration < 0f && jumpHeight >= 0f);
 
         return Mathf.Sqrt(-2f * acceleration * jumpHeight);
     }
