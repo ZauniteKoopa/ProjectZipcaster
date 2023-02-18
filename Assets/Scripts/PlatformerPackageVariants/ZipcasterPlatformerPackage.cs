@@ -152,13 +152,6 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
                 hookDir = aimAssist.adjustAim(hookDir, transform.position);
             }
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
-            if (!grounded && !unlimitedHooks) {
-                curHooksLeft--;
-
-                if (curHooksLeft == 0) {
-                    loseAllHooksEvent.Invoke();
-                }
-            }
             hookFiring = true;
             reticle.gameObject.SetActive(false);
         }
@@ -265,6 +258,15 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
         hook.reset();
         reapplyRunningHorizontalForce();
+
+        // decrement hook count
+        if (!grounded && !unlimitedHooks) {
+            curHooksLeft--;
+
+            if (curHooksLeft == 0) {
+                loseAllHooksEvent.Invoke();
+            }
+        }
 
         if (curHooksLeft > 0) {
             reticle.gameObject.SetActive(true);

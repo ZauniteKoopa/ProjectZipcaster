@@ -1262,7 +1262,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.35
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1897,7 +1897,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: aa83c3b2a09ee5e4a9c9913a2bed5a3b, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2390,7 +2390,7 @@ MonoBehaviour:
   longJumpHeight: 3
   stoppedJumpHeight: 1
   gravityAcceleration: 35
-  apexGravityReduction: 0.5
+  apexGravityReduction: 0.6
   apexVelocityDefinition: 1.5
   maxFallSpeed: 20
   collisionMask:
@@ -2401,14 +2401,14 @@ MonoBehaviour:
   ceilingKnockback: 2
   landingOffset: 0.05
   walkSpeed: 8
-  airReduction: 0.75
+  airReduction: 0.5
   maxHorizontalSpeed: 100
   momentumEaseIn: 0.75
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
-  wallJumpHorizontalInertia: 2.5
-  wallInertiaEffectDuration: 0.1
-  wallJumpHeight: 1.5
+  wallJumpHorizontalInertia: 2.65
+  wallInertiaEffectDuration: 0.115
+  wallJumpHeight: 0.7
   extraJumps: 1
   extraJumpsCancelsMomentum: 1
   extraJumpHeight: 1.5
