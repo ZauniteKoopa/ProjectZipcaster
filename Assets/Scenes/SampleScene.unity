@@ -3070,10 +3070,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4259239204769286705, guid: 6662dd0076f42a3459542ca7e1b54a88, type: 3}
-      propertyPath: upwardLaunchHeight
-      value: 0.65
-      objectReference: {fileID: 0}
     - target: {fileID: 5931920768014224364, guid: 6662dd0076f42a3459542ca7e1b54a88, type: 3}
       propertyPath: m_RootOrder
       value: 13
