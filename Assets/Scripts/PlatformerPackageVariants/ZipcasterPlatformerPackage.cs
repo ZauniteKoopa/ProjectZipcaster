@@ -36,6 +36,8 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     private LineRenderer aimLine;
     [SerializeField]
     private XY_AimAssist aimAssist;
+    public UnityEvent loseAllHooksEvent;
+    public UnityEvent refreshAllHooksEvent;
 
     [Header("Zip Dash Variables")]
     [SerializeField]
@@ -152,6 +154,10 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
             hook.fireHook(hookDir, maxZipHookDistance, zipHookSpeed);
             if (!grounded && !unlimitedHooks) {
                 curHooksLeft--;
+
+                if (curHooksLeft == 0) {
+                    loseAllHooksEvent.Invoke();
+                }
             }
             hookFiring = true;
             reticle.gameObject.SetActive(false);
@@ -354,6 +360,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     //  Post: refresh any resources that the specific package variant may need
     protected override void refreshResourcesOnLanding() {
         curHooksLeft = numHookCasts;
+        refreshAllHooksEvent.Invoke();
         reticle.gameObject.SetActive(true);
     }
 

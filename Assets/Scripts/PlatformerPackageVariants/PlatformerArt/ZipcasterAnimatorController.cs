@@ -4,6 +4,20 @@ using UnityEngine;
 
 public class ZipcasterAnimatorController : PlatformerScaleAnimator
 {
+    [SerializeField]
+    private Color usedAllHooksColor = Color.red;
+
+
+    // Main function to intialize for other children
+    protected override void initialize(PlatformerPackage p) {
+        ZipcasterPlatformerPackage zPlatformer = p as ZipcasterPlatformerPackage;
+        Debug.Assert(zPlatformer != null);
+
+        zPlatformer.loseAllHooksEvent.AddListener(onAllHooksDepleted);
+        zPlatformer.refreshAllHooksEvent.AddListener(onAllHooksRefreshed);
+    }
+    
+    
     // Main function to update animator variables
     //  Pre: none
     //  Post: updates animator variables based on platformer package state
@@ -67,6 +81,17 @@ public class ZipcasterAnimatorController : PlatformerScaleAnimator
 
             return Vector3.Project(zPlatformer.currentMouseDir, Vector3.left).normalized == Vector3.left;
         }
+    }
+
+    // Event handler function for when all hooks are refreshed
+    private void onAllHooksRefreshed() {
+        render.color = Color.white;
+    }
+
+
+    // Event handler function for when all hooks are used
+    private void onAllHooksDepleted() {
+        render.color = usedAllHooksColor;
     }
 
 }

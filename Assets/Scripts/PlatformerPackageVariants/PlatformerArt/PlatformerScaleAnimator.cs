@@ -19,7 +19,7 @@ public class PlatformerScaleAnimator : MonoBehaviour
     private Vector3 originalScale;
     private Coroutine runningLandingSequence = null;
     protected Animator animator;
-    private SpriteRenderer render;
+    protected SpriteRenderer render;
 
 
     // On awake, check
@@ -40,7 +40,13 @@ public class PlatformerScaleAnimator : MonoBehaviour
         if (render == null) {
             Debug.LogError("No sprite render attached to animator. Please attach something that I can animate");
         }
+
+        initialize(platformer);
     }
+
+
+    // Main function to intialize for other children
+    protected virtual void initialize(PlatformerPackage p) {}
     
     // On update, render the scale
     private void Update() {

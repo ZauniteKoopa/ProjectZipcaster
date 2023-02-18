@@ -826,6 +826,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   platformer: {fileID: 4349017326146152972}
   landingTime: 0.3
+  usedAllHooksColor: {r: 1, g: 0.74412596, b: 0.21383637, a: 1}
 --- !u!1 &1417265751
 GameObject:
   m_ObjectHideFlags: 0
@@ -2425,6 +2426,12 @@ MonoBehaviour:
     m_Bits: 1032
   aimLine: {fileID: 1509378570}
   aimAssist: {fileID: 284641977}
+  loseAllHooksEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  refreshAllHooksEvent:
+    m_PersistentCalls:
+      m_Calls: []
   startingDashSpeed: 3
   accelerationDuration: 0.15
   zipDashSpeed: 20
