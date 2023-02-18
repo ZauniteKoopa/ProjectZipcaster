@@ -6,6 +6,12 @@ public class ZipcasterAnimatorController : PlatformerScaleAnimator
 {
     [SerializeField]
     private Color usedAllHooksColor = Color.red;
+    [SerializeField]
+    [Min(1f)]
+    private float stretchX = 1.2f;
+    [SerializeField]
+    [Min(0.1f)]
+    private float stretchY = 0.8f;
 
 
     // Main function to intialize for other children
@@ -52,6 +58,11 @@ public class ZipcasterAnimatorController : PlatformerScaleAnimator
             if (curDashDir.x < 0f) {
                 curDashDir *= -1f;
             }
+
+            // Stretch unit in the x direction
+            transform.localScale = new Vector3(originalScale.x * stretchX,
+                                                originalScale.y * stretchY,
+                                                originalScale.z);
 
             transform.right = curDashDir;
         } else {

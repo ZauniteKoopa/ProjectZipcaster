@@ -16,7 +16,7 @@ public class PlatformerScaleAnimator : MonoBehaviour
     [Min(0.01f)]
     private float landingTime = 0.25f;
 
-    private Vector3 originalScale;
+    protected Vector3 originalScale;
     private Coroutine runningLandingSequence = null;
     protected Animator animator;
     protected SpriteRenderer render;

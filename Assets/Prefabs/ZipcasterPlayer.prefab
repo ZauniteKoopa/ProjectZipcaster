@@ -827,6 +827,8 @@ MonoBehaviour:
   platformer: {fileID: 4349017326146152972}
   landingTime: 0.3
   usedAllHooksColor: {r: 1, g: 0.74412596, b: 0.21383637, a: 1}
+  stretchX: 1.35
+  stretchY: 0.65
 --- !u!1 &1417265751
 GameObject:
   m_ObjectHideFlags: 0

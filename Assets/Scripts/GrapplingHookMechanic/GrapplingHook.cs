@@ -141,9 +141,7 @@ public class GrapplingHook : MonoBehaviour
                 collisionPoint = adjLaunchPoint.getHookDestination();
             } else {
                 Vector2 contactPoint = curContactCollision.GetContact(0).point;
-                Vector2 contactNormal = curContactCollision.GetContact(0).normal;
-                Vector2 ownerScale = owner.lossyScale;
-                collisionPoint = contactPoint + 0.55f * new Vector2(ownerScale.x * contactNormal.x, ownerScale.y * contactNormal.y);
+                collisionPoint = contactPoint;
             }
         }
 
