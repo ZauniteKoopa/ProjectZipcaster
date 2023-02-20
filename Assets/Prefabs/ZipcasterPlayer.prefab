@@ -2406,7 +2406,7 @@ MonoBehaviour:
   momentumEaseIn: 0.8
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
-  wallJumpHorizontalInertia: 2.75
+  wallJumpHorizontalInertia: 2.8
   wallInertiaEffectDuration: 0.13
   wallJumpHeight: 1.3
   extraJumps: 1
@@ -2445,7 +2445,7 @@ MonoBehaviour:
   momentumDuration: 0.6
   dashCancelJumpHeight: 2
   minVerticalDashCancelReq: 0.3
-  maxCloseDistance: 0.6
+  maxCloseDistance: 0.7
 --- !u!114 &1710468116
 MonoBehaviour:
   m_ObjectHideFlags: 0
