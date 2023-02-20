@@ -52,19 +52,23 @@ public class DashPlatformerPackage : PlatformerPackage
 
     // Main private helper function to handle the jumping action per frame
     //  Post: moves the player unit down based on jump
-    protected override void handleJump() {
+    protected override float handleJump() {
         if (runningDashCoroutine == null) {
-            base.handleJump();
+            return base.handleJump();
         }
+
+        return 0f;
     }
 
 
     // Main private helper function to handle the act of horizontal movewment per frame
     //  Post: move the player if the player is pressing a button
-    protected override void handleMovement() {
+    protected override float handleMovement() {
         if (runningDashCoroutine == null) {
-            base.handleMovement();
+            return base.handleMovement();
         }
+
+        return 0f;
     }
 
 

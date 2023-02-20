@@ -191,14 +191,13 @@ public class PlatformerPackage : MonoBehaviour
     void Update()
     {
         updateWallGrabState();
-        handleJump();
-        handleMovement();
+        transform.Translate(new Vector2(handleMovement(), handleJump()));
     }
 
 
     // Main private helper function to handle the jumping action per frame
-    //  Post: moves the player unit down based on jump
-    protected virtual void handleJump() {
+    //  Post: returns the Y direction of the vector
+    protected virtual float handleJump() {
         // If falling, do falling sequence
         if (falling) {
             // Check celing condition
@@ -236,14 +235,16 @@ public class PlatformerPackage : MonoBehaviour
             }
 
             // Actually translate the function
-            transform.Translate(curDistDelta * Vector2.up);
+            return curDistDelta;
         }
+
+        return 0f;
     }
 
 
     // Main private helper function to handle the act of horizontal movewment per frame
-    //  Post: move the player if the player is pressing a button
-    protected virtual void handleMovement() {
+    //  Post: returns the x direction of the vector
+    protected virtual float handleMovement() {
         // Initially apply inertia to the current speed
         float currentSpeed = inertiaRatio * getCurrentWalkingSpeed();
         currentSpeed += (roomWindZone != null) ? roomWindZone.getHorizontalWindSpeed() : 0f;
@@ -279,7 +280,7 @@ public class PlatformerPackage : MonoBehaviour
         }
 
         // Actually apply speed to the player in the game
-        transform.Translate(curDistDelta * transform.right);
+        return curDistDelta;
     }
 
 

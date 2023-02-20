@@ -160,23 +160,27 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
     // Main function to update reticle as well as movement
     //  Post: reticle position is updated and movement controls are handled by parent classes
-    protected override void handleMovement() {
+    protected override float handleMovement() {
         if (curHooksLeft > 0) {
             updateReticlePosition();
         }
 
         // Parents handles the rest of the movement
         if (!isZipping()) {
-            base.handleMovement();
+            return base.handleMovement();
         }
+
+        return 0f;
     }
 
 
     // Main function to handle jump
-    protected override void handleJump() {
+    protected override float handleJump() {
         if (!isZipping()) {
-            base.handleJump();
+            return base.handleJump();
         }
+
+        return 0f;
     }
 
 
