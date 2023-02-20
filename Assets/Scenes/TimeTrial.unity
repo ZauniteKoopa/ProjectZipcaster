@@ -142,6 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraMock: {fileID: 2029229307}
   possibleSpawnPoints: []
+  lockedDoors: []
   minLocalX: 0
   maxLocalX: 0
   minLocalY: -7

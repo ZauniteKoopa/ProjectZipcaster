@@ -2406,7 +2406,7 @@ MonoBehaviour:
   momentumEaseIn: 0.8
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
-  wallJumpHorizontalInertia: 2.8
+  wallJumpHorizontalInertia: 2.9
   wallInertiaEffectDuration: 0.13
   wallJumpHeight: 1.3
   extraJumps: 1
