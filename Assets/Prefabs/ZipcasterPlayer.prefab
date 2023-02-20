@@ -2403,12 +2403,12 @@ MonoBehaviour:
   walkSpeed: 8
   airReduction: 0.5
   maxHorizontalSpeed: 100
-  momentumEaseIn: 0.75
+  momentumEaseIn: 0.8
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3
-  wallJumpHorizontalInertia: 2.8
-  wallInertiaEffectDuration: 0.13
-  wallJumpHeight: 0.9
+  wallJumpHorizontalInertia: 3.75
+  wallInertiaEffectDuration: 0.105
+  wallJumpHeight: 1.5
   extraJumps: 1
   extraJumpsCancelsMomentum: 1
   extraJumpHeight: 1.5

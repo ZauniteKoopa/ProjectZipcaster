@@ -116,7 +116,7 @@ public class CameraZone : MonoBehaviour
 
             // Connect events to locked doors
             IPlatformerStatus playerStatus = playerCollider.GetComponent<IPlatformerStatus>();
-            if (playerStatus != null) {
+            if (playerStatus != null && lockedDoors != null) {
                 foreach(LockedDoor lockedDoor in lockedDoors) {
                     playerStatus.platformerRespawnEvent.AddListener(lockedDoor.reset);
                 }
