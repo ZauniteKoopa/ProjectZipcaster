@@ -234,9 +234,10 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     //  Post: Handle the case when it actually collided with something
     private void onHookSequenceEnd() {
         Vector2 collisionPoint;
+        Vector2 collisionNormal;
         hookFiring = false;
 
-        if (hook.hookedEnviornment(out collisionPoint)) {
+        if (hook.hookedEnviornment(out collisionPoint, out collisionNormal)) {
             postDashLaunchHeight = hook.getUpwardLaunchHeight();
 
             // Run sequence
@@ -246,7 +247,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
             stopVerticalVelocity();
             stopAllMomentum();
-            runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed, startingDashSpeed));
+            runningZipSequence = StartCoroutine(zipSequence(collisionPoint, zipDashSpeed, startingDashSpeed, collisionNormal));
 
         } else {
             onHookDashEnd();
@@ -295,12 +296,12 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
     // Main IEnumerator for dashing
     //  Pre: dir is the direction of the dash, dashDist is the position of the dash, dashDuration is how long it will last
     //  Post: do a running dash sequence
-    private IEnumerator zipSequence(Vector2 zipDest, float zipSpeed, float startSpeed) {
+    private IEnumerator zipSequence(Vector2 zipDest, float zipSpeed, float startSpeed, Vector2 zipWallNormal) {
         Debug.Assert(startSpeed >= 0f && zipSpeed > 0f && zipSpeed >= startSpeed);
 
         // Set up loop
         float curDistance = Vector2.Distance(transform.position, zipDest);
-        Vector2 curZipDir = adjustMovementForCollision(zipDest - (Vector2)transform.position);
+        Vector2 curZipDir = adjustMovementForCollision((zipDest - (Vector2)transform.position).normalized);
         float aTimer = 0f;
 
         // Actual loop
@@ -320,12 +321,19 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
                 distDelta = hit.distance - zipDashOffset;
             }
 
-            // Translate
+            // Calculate translate
             transform.Translate(distDelta * curZipDir);
 
             // Establish loop variables again
             curDistance = Vector2.Distance(transform.position, zipDest);
-            curZipDir = adjustMovementForCollision(zipDest - (Vector2)transform.position);
+            curZipDir = adjustMovementForCollision((zipDest - (Vector2)transform.position).normalized);
+        }
+
+        // Adjust player position to land or slide on wall
+        float offsetDistance = 0.8f;
+        RaycastHit2D landingRayHit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, -zipWallNormal, offsetDistance, collisionZipMask);
+        if (landingRayHit.collider) {
+            transform.position = (Vector2)transform.position + ((landingRayHit.distance - 0.05f) * -zipWallNormal);
         }
 
         // Cleanup
@@ -344,8 +352,11 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
     // Main function to check if a vector is approximating zero
     //  Post: returns a boolean if the vector is close enough to zero
+    private const float EPSILON_VECTOR = 0.05f;
+
     private bool isZeroVector(Vector2 v) {
-        return (v.x < 0.05f && v.x > -0.05f) && (v.y < 0.05f && v.y > -0.05f);
+        return (v.x < EPSILON_VECTOR && v.x > -EPSILON_VECTOR) && (v.y < EPSILON_VECTOR && v.y > -EPSILON_VECTOR);
+        // return false;
     }
 
 

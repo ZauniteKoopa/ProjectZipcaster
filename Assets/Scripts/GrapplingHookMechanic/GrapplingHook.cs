@@ -130,8 +130,9 @@ public class GrapplingHook : MonoBehaviour
 
     // Main function to check if the hook sequence is running
     //  Post: returns the current contact point that made contact with the hook
-    public bool hookedEnviornment(out Vector2 collisionPoint) {
+    public bool hookedEnviornment(out Vector2 collisionPoint, out Vector2 collisionNormal) {
         collisionPoint =  Vector2.zero;
+        collisionNormal = Vector2.zero;
         
         // If collision happened, set collision point to the contact point offseted by the normal
         if (curContactCollision != null) {
@@ -141,13 +142,37 @@ public class GrapplingHook : MonoBehaviour
                 collisionPoint = adjLaunchPoint.getHookDestination();
             } else {
                 Vector2 contactPoint = curContactCollision.GetContact(0).point;
-                collisionPoint = contactPoint;
+                collisionNormal = curContactCollision.GetContact(0).normal.normalized;
+                collisionPoint = contactPoint + (0.45f * collisionNormal);
             }
         }
 
 
         return curContactCollision != null;
     }
+
+
+    // // Main function to check if the hook sequence is running
+    // //  Post: returns the current contact point that made contact with the hook
+    // public bool hookedEnviornment(out Vector2 collisionPoint) {
+    //     collisionPoint =  Vector2.zero;
+        
+    //     // If collision happened, set collision point to the contact point offseted by the normal
+    //     if (curContactCollision != null) {
+    //         AdjustedLaunchPoint adjLaunchPoint = curContactCollision.collider.GetComponent<AdjustedLaunchPoint>();
+
+    //         if (adjLaunchPoint != null) {
+    //             collisionPoint = adjLaunchPoint.getHookDestination();
+    //         } else {
+    //             Vector2 contactPoint = curContactCollision.GetContact(0).point;
+    //             Vector2 contactNormal = curContactCollision.GetContact(0).normal;
+    //             collisionPoint = contactPoint + ((owner.lossyScale.x + 0.05f) * contactNormal.normalized);
+    //         }
+    //     }
+
+
+    //     return curContactCollision != null;
+    // }
 
 
     // Main function to get upward launch height after hook dash
