@@ -109,6 +109,7 @@ public class PlatformerPackage : MonoBehaviour
     [Min(0f)]
     private float wallJumpHeight = 1.5f;
     private IBlockerSensor curGrabbedWall = null;
+    private bool climbing = false;
 
     [Header("Extra Jumps")]
     [SerializeField]
@@ -326,6 +327,7 @@ public class PlatformerPackage : MonoBehaviour
         if (!falling || curFallVelocity > 0f) {
             audioManager.setWallSlideSound(false);
             curGrabbedWall = null;
+            climbing = false;
         }
 
         // Else if you're currently grabbing a wall
@@ -335,6 +337,7 @@ public class PlatformerPackage : MonoBehaviour
             if (!curGrabbedWall.isBlocked()) {
                 audioManager.setWallSlideSound(false);
                 curGrabbedWall = null;
+                climbing = false;
             }
 
             // Check if you're moving in the opposing direction if you're still grabbing a wall
@@ -345,6 +348,7 @@ public class PlatformerPackage : MonoBehaviour
                 if (movingOpposingDirection) {
                     audioManager.setWallSlideSound(false);
                     curGrabbedWall = null;
+                    climbing = false;
                 }
             }
         }
@@ -497,10 +501,22 @@ public class PlatformerPackage : MonoBehaviour
     }
 
 
-    // Main event hanler function for when you are walking
+    // Main event hanler function for when you pause the game
     public void onPauseMenuPress(InputAction.CallbackContext context) {
         if (context.started && pauseMenu != null) {
             pauseMenu.onPauseButtonPress();
+        }
+    }
+
+
+    // Main event hanler function for when you are climbing
+    public void onClimbPress(InputAction.CallbackContext context) {
+        if (context.started && isGrabbingWall()) {
+            climbing = true;
+            
+        } else if (context.canceled) {
+            climbing = false;
+
         }
     }
 
@@ -662,9 +678,11 @@ public class PlatformerPackage : MonoBehaviour
     //  Pre: none
     //  Post: returns a non-negative float representing the max fall speed of this frame
     protected virtual float getMaxFallSpeed() {
-        float curMaxFallSpeed = (isGrabbingWall()) ? maxWallSlideSpeed : maxFallSpeed;
-        Debug.Assert(curMaxFallSpeed > 0f);
-        return curMaxFallSpeed;
+        if (isGrabbingWall()) {
+            return (climbing) ? 0f : maxWallSlideSpeed;
+        } else {
+            return maxFallSpeed;
+        }
     }
 
 

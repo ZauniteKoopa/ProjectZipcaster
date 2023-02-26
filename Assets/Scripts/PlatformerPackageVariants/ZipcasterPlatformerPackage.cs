@@ -288,7 +288,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
         float maxFallSpeed = (hookFiring) ? Mathf.Min(base.getMaxFallSpeed(), zipcastMaxFallSpeed) :
                                             base.getMaxFallSpeed();
 
-        Debug.Assert(maxFallSpeed > 0f);
+        Debug.Assert(maxFallSpeed >= 0f);
         return maxFallSpeed;
     }
 
@@ -329,18 +329,55 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
             curZipDir = adjustMovementForCollision((zipDest - (Vector2)transform.position).normalized);
         }
 
-        // Adjust player position to land or slide on wall
-        float offsetDistance = 0.8f;
-        RaycastHit2D landingRayHit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, -zipWallNormal, offsetDistance, collisionZipMask);
-        if (landingRayHit.collider) {
-            transform.position = (Vector2)transform.position + ((landingRayHit.distance - 0.05f) * -zipWallNormal);
-        }
+        postDashPlayerAdjustment(zipWallNormal);
 
         // Cleanup
         stopVerticalVelocity();
         stopAllMomentum();
         runningZipSequence = null;
         onHookDashEnd();
+    }
+
+
+    private static readonly float[] EDGE_ADJUSTMENT_DIRECTIONS = {1f, -1f};
+
+    // Main private helper function to do adjustments to player position post-zip-dash
+    //  Pre: zipWallNormal is the normal of the wall / floor that the player is dashing to. Player finished zip dashing
+    //  Post: adjusts player position bbased on zip dash
+    private void postDashPlayerAdjustment(Vector2 zipWallNormal) {
+        // If player dashes to an edge, immediately launch yourself on that edge
+        foreach (float dir in EDGE_ADJUSTMENT_DIRECTIONS) {
+            // calculate ray variables
+            float edgeRayOffsetX = dir * ((transform.lossyScale.x / 2f) + 0.25f);
+            float edgeRayOffsetY = (transform.lossyScale.y / 2f) + 0.1f;
+
+            // Confirm that you're not leaning on a wall
+            Vector2 wallRayPosition = (Vector2)transform.position + new Vector2(0f, edgeRayOffsetY);
+            RaycastHit2D wallRayHit = Physics2D.Raycast(wallRayPosition, dir * Vector2.right, edgeRayOffsetX, collisionZipMask);
+
+            // If confirm that you're not leaning on a wall, confirm that you're leaning on an edge
+            if (!wallRayHit.collider) {
+                Vector2 edgeRayPosition = wallRayPosition + new Vector2(edgeRayOffsetX, 0f);
+                RaycastHit2D edgeRayHit = Physics2D.Raycast(edgeRayPosition, Vector2.down, transform.lossyScale.y, collisionZipMask);
+
+                // If edge detected, launch vertically
+                if (edgeRayHit.collider) {
+                    float adjustedEdgeY = edgeRayHit.point.y + (transform.lossyScale.y / 2f);
+                    float edgeLaunchHeight = adjustedEdgeY - transform.position.y + 0.1f;
+
+                    if (postDashLaunchHeight < edgeLaunchHeight) {
+                        postDashLaunchHeight = edgeLaunchHeight;
+                    }
+                }
+            }
+        }
+
+        // If player dashes to floor or wall. have player snap to floor or wall
+        // float offsetDistance = 0.8f;
+        // RaycastHit2D landingRayHit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, -zipWallNormal, offsetDistance, collisionZipMask);
+        // if (landingRayHit.collider) {
+        //     transform.position = (Vector2)transform.position + ((landingRayHit.distance - 0.05f) * -zipWallNormal);
+        // }
     }
 
 
