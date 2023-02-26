@@ -89,8 +89,8 @@ public class ZipcasterAnimatorController : PlatformerScaleAnimator
         
         // Else, do it based on 
         } else {
-
-            return Vector3.Project(zPlatformer.currentMouseDir, Vector3.left).normalized == Vector3.left;
+            Vector2 facingDirection = (zPlatformer.isDashing) ? zPlatformer.forwardDir : zPlatformer.currentMouseDir;
+            return Vector3.Project(facingDirection, Vector3.left).normalized == Vector3.left;
         }
     }
 
