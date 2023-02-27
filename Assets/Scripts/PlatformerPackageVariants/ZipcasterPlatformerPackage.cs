@@ -353,7 +353,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
             // Confirm that you're not leaning on a wall
             Vector2 wallRayPosition = (Vector2)transform.position + new Vector2(0f, edgeRayOffsetY);
-            RaycastHit2D wallRayHit = Physics2D.Raycast(wallRayPosition, dir * Vector2.right, edgeRayOffsetX, collisionZipMask);
+            RaycastHit2D wallRayHit = Physics2D.Raycast(wallRayPosition, Vector2.right, edgeRayOffsetX, collisionZipMask);
 
             // If confirm that you're not leaning on a wall, confirm that you're leaning on an edge
             if (!wallRayHit.collider) {
