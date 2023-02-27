@@ -2419,11 +2419,11 @@ MonoBehaviour:
   walkSpeed: 8
   airReduction: 0.5
   maxHorizontalSpeed: 100
-  momentumEaseIn: 0.8
+  momentumEaseIn: 0.85
   wallSlideReduction: 0.4
-  maxWallSlideSpeed: 3
-  wallJumpHorizontalInertia: 3.25
-  wallInertiaEffectDuration: 0.15
+  maxWallSlideSpeed: 3.25
+  wallJumpHorizontalInertia: 3.6
+  wallInertiaEffectDuration: 0.1
   wallJumpHeight: 1.4
   extraJumps: 1
   extraJumpsCancelsMomentum: 1
@@ -2432,9 +2432,9 @@ MonoBehaviour:
   edgeAdjustmentOffset: 0.1
   singleJumpDisplayT: 1.42
   jumpTrajectoryQuality: 50
-  displayDoubleJump: 0
+  displayDoubleJump: 1
   showApexDoubleJump: 0
-  doubleJumpDisplayT: 0.83
+  doubleJumpDisplayT: 0.53
   hook: {fileID: 4349017325454925371}
   reticle: {fileID: 1509378568}
   mainCamera: {fileID: 4349017326858827610}
@@ -3052,7 +3052,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

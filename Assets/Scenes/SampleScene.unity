@@ -3144,6 +3144,10 @@ PrefabInstance:
       value: PlayerCharacter
       objectReference: {fileID: 0}
     - target: {fileID: 4349017326146152972, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
+      propertyPath: displayDoubleJump
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349017326146152972, guid: fbb9e942c1ea7174caa59ff3216f5838, type: 3}
       propertyPath: showDoubleJumpAtApex
       value: 0
       objectReference: {fileID: 0}

@@ -78,6 +78,9 @@ public class PlatformerPackage : MonoBehaviour
     [SerializeField]
     [Range(0f, 1f)]
     private float momentumEaseIn = 0.6f;
+    [SerializeField]
+    [Range(0f, 0.1f)]
+    private float wallOffset = 0.05f;
     private bool isMoving = false;
     private float walkingDirection = 0f;
     private bool facingRight = true;
@@ -179,6 +182,9 @@ public class PlatformerPackage : MonoBehaviour
         feet.landingEvent.AddListener(onFeetLand);
         feet.fallingEvent.AddListener(onFeetFall);
         feet.setCoyoteTime(coyoteTime);
+
+        leftSensor.blockedStartEvent.AddListener(onLeftSideCollision);
+        rightSensor.blockedStartEvent.AddListener(onRightSideCollision);
 
         // Check horizontal sensors and set them up
         if (leftSensor == null || rightSensor == null) {
@@ -400,6 +406,36 @@ public class PlatformerPackage : MonoBehaviour
 
         refreshResourcesOnLanding();
         platformerLandEvent.Invoke();
+    }
+
+
+    // Main event function to check when you hit the left side
+    //  Post: when you hit the left side, offset from that collision
+    private void onLeftSideCollision() {
+        Vector3 mainBoxcastPos = transform.position - (0.1f * Vector3.left);
+        Vector3 mainBoxcastSize = transform.lossyScale * 0.95f;
+        float distDelta = transform.lossyScale.x * 0.3f;
+        
+        RaycastHit2D hit = Physics2D.BoxCast(mainBoxcastPos, mainBoxcastSize, 0f, Vector2.left, distDelta, collisionMask);
+        if (hit.collider != null) {
+            float adjustedXPos = hit.point.x + (transform.lossyScale.x / 2f + wallOffset);
+            transform.position = new Vector3(adjustedXPos, transform.position.y, 0f); 
+        }
+    }
+
+
+    // Main event function to check when you hit the left side
+    //  Post: when you hit the left side, offset from that collision
+    private void onRightSideCollision() {
+        Vector3 mainBoxcastPos = transform.position - (0.1f * Vector3.right);
+        Vector3 mainBoxcastSize = transform.lossyScale * 0.95f;
+        float distDelta = transform.lossyScale.x * 0.3f;
+        
+        RaycastHit2D hit = Physics2D.BoxCast(mainBoxcastPos, mainBoxcastSize, 0f, Vector2.right, distDelta, collisionMask);
+        if (hit.collider != null) {
+            float adjustedXPos = hit.point.x + ((transform.lossyScale.x / 2f + wallOffset) * -1f);
+            transform.position = new Vector3(adjustedXPos, transform.position.y, 0f);   
+        }
     }
 
 
