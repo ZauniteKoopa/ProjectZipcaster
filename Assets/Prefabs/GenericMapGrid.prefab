@@ -59,7 +59,6 @@ GameObject:
   - component: {fileID: 2225866086346719904}
   - component: {fileID: 2225866086346719907}
   - component: {fileID: 2225866086346719906}
-  - component: {fileID: 2225866086346719933}
   m_Layer: 3
   m_Name: NormalPlatforms
   m_TagString: Untagged
@@ -243,7 +242,7 @@ TilemapCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 1
+  m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
@@ -268,48 +267,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!66 &2225866086346719933
-CompositeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2225866086346719935}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
-  m_GenerationType: 0
-  m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 2225866086346719907}
-    m_ColliderPaths:
-    - - X: 30000000
-        Y: -20000000
-      - X: 30000000
-        Y: -10000000
-      - X: 10000000
-        Y: -10000000
-      - X: 10000000
-        Y: 0
-      - X: 0
-        Y: 0
-      - X: 0
-        Y: -20000000
-  m_CompositePaths:
-    m_Paths:
-    - - {x: 2.999971, y: -2}
-      - {x: 2.999971, y: -1}
-      - {x: 1, y: -0.9999706}
-      - {x: 0.99997073, y: 0}
-      - {x: 0, y: -0.000029300001}
-      - {x: 0.000029300001, y: -2}
-  m_VertexDistance: 0.0005
-  m_OffsetDistance: 0.00005
 --- !u!1 &2225866087281131684
 GameObject:
   m_ObjectHideFlags: 0
