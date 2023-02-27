@@ -132,11 +132,19 @@ public class PlatformerPackage : MonoBehaviour
 
     [Header("Gizmo Display")]
     [SerializeField]
-    [Range(0, 1)]
-    private float postApexJumpDisplayT = 5f;
+    [Range(0, 2f)]
+    private float singleJumpDisplayT = 0.5f;
     [SerializeField]
-    [Range(1, 100)]
+    [Range(10, 100)]
     private int jumpTrajectoryQuality = 20;
+    [SerializeField]
+    private bool displayDoubleJump = false;
+    [SerializeField]
+    private bool showApexDoubleJump = false;
+    [SerializeField]
+    [Range(0.01f, 2f)]
+    private float doubleJumpDisplayT = 0.5f;
+
 
 
     // Accessible elements for animators
@@ -747,123 +755,58 @@ public class PlatformerPackage : MonoBehaviour
 
     // Main function to draw gizmos for this platformer package when selected
     private void OnDrawGizmosSelected() {
+        // Display jump
         Gizmos.color = Color.blue;
+        float maxJumpVelocity = calculateStartingJumpVelocity(-gravityAcceleration, longJumpHeight);
+        drawJumpTrajectory(jumpTrajectoryQuality, maxJumpVelocity, transform.position, singleJumpDisplayT);
 
-        Vector3 apexStartPoint = drawPreApexTrajectory(jumpTrajectoryQuality);
-        Vector3 apexEndPoint = drawApexTrajectory(jumpTrajectoryQuality, apexStartPoint);
-        drawPostApexTrajectory(jumpTrajectoryQuality, apexEndPoint, postApexJumpDisplayT);
+        // Display double jump
+        if (displayDoubleJump) {
+            Gizmos.color = Color.magenta;
+
+            // Calculate velocity, t, and position
+            float doubleJumpVelocity = calculateStartingJumpVelocity(-gravityAcceleration, extraJumpHeight);
+            float actualDoubleJumpT = (showApexDoubleJump) ? getApexT(maxJumpVelocity) : doubleJumpDisplayT;
+            Vector3 doubleJumpPosR = new Vector3(calculateMaxJumpX(actualDoubleJumpT), calculateMaxJumpY(actualDoubleJumpT, maxJumpVelocity));
+            Vector3 doubleJumpPosL = new Vector3(-doubleJumpPosR.x, doubleJumpPosR.y) + transform.position;
+            doubleJumpPosR += transform.position;
+
+            // draw double jump on both sides
+            drawJumpTrajectory(jumpTrajectoryQuality, doubleJumpVelocity, doubleJumpPosR, singleJumpDisplayT);
+            drawJumpTrajectory(jumpTrajectoryQuality, doubleJumpVelocity, doubleJumpPosL, singleJumpDisplayT);
+        }
     }
 
 
     // Main function to draw pre-apex jump trajectory
     //  Pre: numLines > 0, represent the number of lines to draw this section
     //  Post: returns the point in which this pre-apex jump trajectory ends if the jump started at origin
-    private Vector3 drawPreApexTrajectory(int numLines) {
+    private void drawJumpTrajectory(int numLines, float startingJumpSpeed, Vector3 startingPosition, float displayT) {
         Debug.Assert(numLines > 0);
 
         // Calculate at what time the apex starts and how mch time is in a given line
-        float startingJump = calculateStartingJumpVelocity(-gravityAcceleration, longJumpHeight);
-        float apexStartT = (startingJump - apexVelocityDefinition) / gravityAcceleration;
-        float deltaT = apexStartT / (float)(numLines);
+        float deltaT = displayT / (float)(numLines);
 
         // Draw the lines
         for (int i = 0; i < numLines; i++) {
             // Get the initial point
             float initialT = i * deltaT;
-            Vector3 initialPoint = new Vector3(calculateMaxJumpX(initialT), calculateMaxJumpY(initialT, gravityAcceleration, startingJump));
+            Vector3 initialPoint = new Vector3(calculateMaxJumpX(initialT), calculateMaxJumpY(initialT, startingJumpSpeed));
             Vector3 initialPoint2 = new Vector3(-initialPoint.x, initialPoint.y);
-            initialPoint += transform.position;
-            initialPoint2 += transform.position;
+            initialPoint += startingPosition;
+            initialPoint2 += startingPosition;
 
             // Get the final point
             float finalT = (i + 1) * deltaT;
-            Vector3 finalPoint = new Vector3(calculateMaxJumpX(finalT), calculateMaxJumpY(finalT, gravityAcceleration, startingJump));
+            Vector3 finalPoint = new Vector3(calculateMaxJumpX(finalT), calculateMaxJumpY(finalT, startingJumpSpeed));
             Vector3 finalPoint2 = new Vector3(-finalPoint.x, finalPoint.y);
-            finalPoint += transform.position;
-            finalPoint2 += transform.position;
+            finalPoint += startingPosition;
+            finalPoint2 += startingPosition;
 
             // Draw gizmo
             Gizmos.DrawLine(initialPoint, finalPoint);
             Gizmos.DrawLine(initialPoint2, finalPoint2);
 
-        }
-
-        return new Vector3(calculateMaxJumpX(apexStartT), calculateMaxJumpY(apexStartT, gravityAcceleration, startingJump));
-    }
-
-
-    // Main function to draw apex jump trajectory
-    //  Pre: numLines > 0, represent the number of lines to draw this section, apexStartPoint is the point where the apex starts if jump starts at origin
-    //  Post: returns the point in which this apex ends
-    private Vector2 drawApexTrajectory(int numLines, Vector3 apexStartPoint) {
-        Debug.Assert(numLines > 0);
-
-        // Calculate at what time the apex starts and how mch time is in a given line
-        float apexEndT = (2 * apexVelocityDefinition) / (apexGravityReduction * gravityAcceleration);
-        float deltaT = apexEndT / (float)(numLines);
-        Vector3 apexStartR = transform.position + apexStartPoint;
-        Vector3 apexStartL = transform.position + new Vector3(-apexStartPoint.x, apexStartPoint.y);
-
-        // Draw the lines
-        for (int i = 0; i < numLines; i++) {
-            // Get the initial point
-            float initialT = i * deltaT;
-            Vector3 initialPoint = new Vector3(calculateMaxJumpX(initialT), calculateMaxJumpY(initialT, apexGravityReduction * gravityAcceleration, apexVelocityDefinition));
-            Vector3 initialPoint2 = new Vector3(-initialPoint.x, initialPoint.y);
-            initialPoint += apexStartR;
-            initialPoint2 += apexStartL;
-
-            // Get the final point
-            float finalT = (i + 1) * deltaT;
-            Vector3 finalPoint = new Vector3(calculateMaxJumpX(finalT), calculateMaxJumpY(finalT, apexGravityReduction * gravityAcceleration, apexVelocityDefinition));
-            Vector3 finalPoint2 = new Vector3(-finalPoint.x, finalPoint.y);
-            finalPoint += (Vector3)apexStartR;
-            finalPoint2 += (Vector3)apexStartL;
-
-            // Draw gizmo
-            Gizmos.DrawLine(initialPoint, finalPoint);
-            Gizmos.DrawLine(initialPoint2, finalPoint2);
-
-        }
-
-        return apexStartPoint + new Vector3(calculateMaxJumpX(apexEndT), calculateMaxJumpY(apexEndT, apexGravityReduction * gravityAcceleration, apexVelocityDefinition));
-    }
-
-
-    // Main function to draw pre-apex jump trajectory
-    //  Pre: numLines > 0, represent the number of lines to draw this section
-    //       apexEndPoint is the point where the apex ends
-    //       endT is how far off the jump do you want to look at
-    //  Post: returns the point in which this pre-apex jump trajectory ends
-    private void drawPostApexTrajectory(int numLines, Vector3 apexEndPoint, float endT) {
-        Debug.Assert(numLines > 0);
-        Debug.Assert(endT >= 0f);
-
-        // Calculate at what time the apex starts and how mch time is in a given line
-        float startingJump = -apexVelocityDefinition;
-        float deltaT = endT / (float)(numLines);
-        Vector3 apexEndR = transform.position + apexEndPoint;
-        Vector3 apexEndL = transform.position + new Vector3(-apexEndPoint.x, apexEndPoint.y);
-
-        // Draw the lines
-        for (int i = 0; i < numLines; i++) {
-            // Get the initial point
-            float initialT = i * deltaT;
-            Vector3 initialPoint = new Vector3(calculateMaxJumpX(initialT), calculateMaxJumpY(initialT, gravityAcceleration, startingJump));
-            Vector3 initialPoint2 = new Vector3(-initialPoint.x, initialPoint.y);
-            initialPoint += apexEndR;
-            initialPoint2 += apexEndL;
-
-            // Get the final point
-            float finalT = (i + 1) * deltaT;
-            Vector3 finalPoint = new Vector3(calculateMaxJumpX(finalT), calculateMaxJumpY(finalT, gravityAcceleration, startingJump));
-            Vector3 finalPoint2 = new Vector3(-finalPoint.x, finalPoint.y);
-            finalPoint += apexEndR;
-            finalPoint2 += apexEndL;
-
-            // Draw gizmo
-            Gizmos.DrawLine(initialPoint, finalPoint);
-            Gizmos.DrawLine(initialPoint2, finalPoint2);
         }
     }
 
@@ -881,8 +824,37 @@ public class PlatformerPackage : MonoBehaviour
     //       g represents the downward acceleration applied to player (non-negative)
     //       initialV reprepresent the initial velocity of this function
     //  Post: returns the max vertical height reached at time T
-    private float calculateMaxJumpY(float t, float g, float initialV) {
-        Debug.Assert(g >= 0f);
-        return (initialV * t) - (0.5f * g * t * t);
+    private float calculateMaxJumpY(float t, float initialV) {
+        float apexStartT = (initialV - apexVelocityDefinition) / gravityAcceleration;
+        float apexEndT = ((2 * apexVelocityDefinition) / (apexGravityReduction * gravityAcceleration)) + apexStartT;
+        float g = (t > apexStartT && t <= apexEndT) ? gravityAcceleration * apexGravityReduction : gravityAcceleration;
+        float initialY = 0f;
+
+        // Pre apex: do nothing, your variables are fine
+
+        // Post apex
+        if (t > apexEndT) {
+            t -= apexEndT;
+            initialY = calculateMaxJumpY(apexEndT, initialV);
+            initialV = -apexVelocityDefinition;
+
+        // In apex
+        } else if (t > apexStartT) {
+            t -= apexStartT;
+            initialY = calculateMaxJumpY(apexStartT, initialV);
+            initialV = apexVelocityDefinition;
+        }
+
+
+        return (initialV * t) - (0.5f * g * t * t) + initialY;
+    }
+
+
+    // Main private helper function to get the apex t
+    private float getApexT(float initialV) {
+        float apexStartT = (initialV - apexVelocityDefinition) / gravityAcceleration;
+        float apexEndT = ((2 * apexVelocityDefinition) / (apexGravityReduction * gravityAcceleration)) + apexStartT;
+
+        return (apexStartT + apexEndT) / 2f;
     }
 }
