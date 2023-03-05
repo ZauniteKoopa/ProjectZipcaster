@@ -403,7 +403,7 @@ public class PlatformerPackage : MonoBehaviour
 
     // IEnumerator to auto wall grab after a frame to check for the collisions
     private IEnumerator autoGrabWallSequence() {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 8; i++) {
             yield return 0;
         }
 
