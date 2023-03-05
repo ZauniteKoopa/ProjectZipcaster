@@ -85,7 +85,13 @@ public class PlatformerPackage : MonoBehaviour
     private float walkingDirection = 0f;
     private bool facingRight = true;
     public virtual Vector2 forwardDir {
-        get {return (facingRight) ? transform.right : -1f * transform.right;}
+        get {
+            if (isGrabbingWall()) {
+                return (curGrabbedWall == rightSensor) ? transform.right : -1f * transform.right;
+            }
+
+            return (facingRight) ? transform.right : -1f * transform.right;
+        }
     }
 
     // The direction that the unit wants to move
@@ -384,7 +390,40 @@ public class PlatformerPackage : MonoBehaviour
                 stopAllMomentum();
             }
         }
+    }
 
+
+    // Main function to grab nearest wall
+    //  Pre: none
+    //  Post: grabs the wall. Prioritizes the left wall over the right wall. If already grabbing wall, do nothing
+    protected void autoGrabWall() {
+        StartCoroutine(autoGrabWallSequence());
+    }
+
+
+    // IEnumerator to auto wall grab after a frame to check for the collisions
+    private IEnumerator autoGrabWallSequence() {
+        for (int i = 0; i < 2; i++) {
+            yield return 0;
+        }
+
+        if (!isGrabbingWall()) {
+            IBlockerSensor touchedBlocker = null;
+
+            // See if you're touching a wall
+            if (leftSensor.isBlocked()) {
+                touchedBlocker = leftSensor;
+            } else if (rightSensor.isBlocked()) {
+                touchedBlocker = rightSensor;
+            }
+
+            // If you are, grab the wall
+            if (touchedBlocker != null) {
+                curGrabbedWall = touchedBlocker;
+                audioManager.setWallSlideSound(true);
+                stopAllMomentum();
+            }
+        }
     }
 
 

@@ -263,6 +263,7 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
 
         hook.reset();
         reapplyRunningHorizontalForce();
+        autoGrabWall();
 
         // decrement hook count
         if (!grounded && !unlimitedHooks) {
@@ -373,11 +374,11 @@ public class ZipcasterPlatformerPackage : PlatformerPackage
         }
 
         // If player dashes to floor or wall. have player snap to floor or wall
-        // float offsetDistance = 0.8f;
-        // RaycastHit2D landingRayHit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, -zipWallNormal, offsetDistance, collisionZipMask);
-        // if (landingRayHit.collider) {
-        //     transform.position = (Vector2)transform.position + ((landingRayHit.distance - 0.05f) * -zipWallNormal);
-        // }
+        float offsetDistance = 0.8f;
+        RaycastHit2D landingRayHit = Physics2D.BoxCast(transform.position, transform.lossyScale * 0.95f, 0f, -zipWallNormal, offsetDistance, collisionZipMask);
+        if (landingRayHit.collider) {
+            transform.position = (Vector2)transform.position + ((landingRayHit.distance - 0f) * -zipWallNormal);
+        }
     }
 
 

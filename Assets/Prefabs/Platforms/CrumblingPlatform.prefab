@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
+  m_Color: {r: 0.7075472, g: 0.03114981, b: 0.3871187, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 750f861615a850842a890be8b194645d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ghostColor: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 0.6}
+  ghostColor: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 0.6}
   crumbleColor: {r: 1, g: 0.50509375, b: 0.035294116, a: 1}
   crumbleTime: 0.5
   disappearTime: 3

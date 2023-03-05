@@ -82,7 +82,7 @@ public class PlatformerScaleAnimator : MonoBehaviour
 
     // Main event handler function for when 
     private void onPlatformerLand() {
-        if (runningLandingSequence == null) {
+        if (runningLandingSequence == null && render.gameObject.activeInHierarchy) {
             runningLandingSequence = StartCoroutine(landingSequence());
         }
     }
