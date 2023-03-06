@@ -355,7 +355,6 @@ public class PlatformerPackage : MonoBehaviour
         if (!falling || curFallVelocity > 0f) {
             audioManager.setWallSlideSound(false);
             curGrabbedWall = null;
-            climbing = false;
         }
 
         // Else if you're currently grabbing a wall
@@ -365,7 +364,6 @@ public class PlatformerPackage : MonoBehaviour
             if (!curGrabbedWall.isBlocked()) {
                 audioManager.setWallSlideSound(false);
                 curGrabbedWall = null;
-                climbing = false;
             }
 
             // Check if you're moving in the opposing direction if you're still grabbing a wall
@@ -376,7 +374,6 @@ public class PlatformerPackage : MonoBehaviour
                 if (movingOpposingDirection) {
                     audioManager.setWallSlideSound(false);
                     curGrabbedWall = null;
-                    climbing = false;
                 }
             }
         }
@@ -602,7 +599,7 @@ public class PlatformerPackage : MonoBehaviour
 
     // Main event hanler function for when you are climbing
     public void onClimbPress(InputAction.CallbackContext context) {
-        if (context.started && isGrabbingWall()) {
+        if (context.started) {
             climbing = true;
             
         } else if (context.canceled) {
