@@ -2420,10 +2420,11 @@ MonoBehaviour:
   airReduction: 0.5
   maxHorizontalSpeed: 100
   momentumEaseIn: 0.85
+  wallOffset: 0.05
   wallSlideReduction: 0.4
   maxWallSlideSpeed: 3.25
-  wallJumpHorizontalInertia: 3.6
-  wallInertiaEffectDuration: 0.1
+  wallJumpHorizontalInertia: 3.25
+  wallInertiaEffectDuration: 0.15
   wallJumpHeight: 1.4
   extraJumps: 1
   extraJumpsCancelsMomentum: 1
@@ -2434,7 +2435,7 @@ MonoBehaviour:
   jumpTrajectoryQuality: 50
   displayDoubleJump: 1
   showApexDoubleJump: 0
-  doubleJumpDisplayT: 0.53
+  doubleJumpDisplayT: 0.9
   hook: {fileID: 4349017325454925371}
   reticle: {fileID: 1509378568}
   mainCamera: {fileID: 4349017326858827610}
@@ -3095,6 +3096,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4349017326146152973}
     m_Modifications:
+    - target: {fileID: 5112393130907789254, guid: 11374d5a24fa4d348a16ca77c18549af, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5112393131647035892, guid: 11374d5a24fa4d348a16ca77c18549af, type: 3}
       propertyPath: m_Name
       value: PlayerUI
