@@ -117,7 +117,11 @@ public class PlatformerPackage : MonoBehaviour
     [SerializeField]
     [Min(0f)]
     private float wallJumpHeight = 1.5f;
+    [SerializeField]
+    [Min(0)]
+    private int wallMoveAwayBufferFrames = 8;
     private IBlockerSensor curGrabbedWall = null;
+    private Coroutine wallMoveAwayBuffer = null;
     private bool climbing = false;
 
     [Header("Extra Jumps")]
@@ -274,6 +278,11 @@ public class PlatformerPackage : MonoBehaviour
     // Main private helper function to handle the act of horizontal movewment per frame
     //  Post: returns the x direction of the vector
     protected virtual float handleMovement() {
+        // If you're currently grabbing a wall, don't move
+        if (isGrabbingWall()) {
+            return 0f;
+        }
+
         // Initially apply inertia to the current speed
         float currentSpeed = inertiaRatio * getCurrentWalkingSpeed();
         currentSpeed += (roomWindZone != null) ? roomWindZone.getHorizontalWindSpeed() : 0f;
@@ -355,6 +364,10 @@ public class PlatformerPackage : MonoBehaviour
         if (!falling || curFallVelocity > 0f) {
             audioManager.setWallSlideSound(false);
             curGrabbedWall = null;
+
+            if (wallMoveAwayBuffer != null) {
+                StopCoroutine(wallMoveAwayBuffer);
+            }
         }
 
         // Else if you're currently grabbing a wall
@@ -364,16 +377,19 @@ public class PlatformerPackage : MonoBehaviour
             if (!curGrabbedWall.isBlocked()) {
                 audioManager.setWallSlideSound(false);
                 curGrabbedWall = null;
+                
+                if (wallMoveAwayBuffer != null) {
+                    StopCoroutine(wallMoveAwayBuffer);
+                }
             }
 
             // Check if you're moving in the opposing direction if you're still grabbing a wall
-            if (isGrabbingWall() && isMoving) {
+            if (isGrabbingWall() && isMoving && wallMoveAwayBuffer == null) {
                 bool movingOpposingDirection = (curGrabbedWall == leftSensor && walkingDirection > 0f) ||
                                            (curGrabbedWall == rightSensor && walkingDirection < 0f);
 
                 if (movingOpposingDirection) {
-                    audioManager.setWallSlideSound(false);
-                    curGrabbedWall = null;
+                    wallMoveAwayBuffer = StartCoroutine(bufferWallMoveAway());
                 }
             }
         }
@@ -387,6 +403,26 @@ public class PlatformerPackage : MonoBehaviour
                 stopAllMomentum();
             }
         }
+    }
+
+    
+    // Helper function to buffer moving away from a wall when grabbing on to it
+    //  Pre: none
+    //  Post: wait for a small delay before actually doing it
+    private IEnumerator bufferWallMoveAway() {
+        for (int i = 0; i < wallMoveAwayBufferFrames; i++) {
+            yield return 0;
+        }
+
+        bool movingOpposingDirection = isMoving && ((curGrabbedWall == leftSensor && walkingDirection > 0f) ||
+                                           (curGrabbedWall == rightSensor && walkingDirection < 0f));
+
+        if (isGrabbingWall() && movingOpposingDirection) {
+            audioManager.setWallSlideSound(false);
+            curGrabbedWall = null;
+        }
+
+        wallMoveAwayBuffer = null;
     }
 
 
