@@ -2418,7 +2418,7 @@ MonoBehaviour:
   landingOffset: 0.05
   walkSpeed: 8
   airReduction: 0.5
-  maxHorizontalSpeed: 100
+  maxHorizontalSpeed: 25
   momentumEaseIn: 0.85
   wallOffset: 0.05
   wallSlideReduction: 0.4
